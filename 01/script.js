@@ -1,5 +1,9 @@
 import * as THREE from 'three';
 
+// canvas
+const canvas = document.querySelector('.webgl');
+
+
 // scene
 const scene = new THREE.Scene();
 // it is like a container that holds all the objects.
@@ -15,9 +19,26 @@ const material = new THREE.MeshBasicMaterial({ color: 0x0000ff });
 
 // mesh
 const mesh = new THREE.Mesh(geometry, material);
-// it is the combination of geometry, material and position.
+
 
 // add the mesh to the scene
 scene.add(mesh);
+
+// sizes
+const sizes = {
+    width: 800,
+    height: 600
+}
+
+// camera
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height);
+camera.position.z = 3;
+scene.add(camera);
+// renderer
+const renderer = new THREE.WebGLRenderer({
+    canvas: canvas,
+})
+renderer.setSize(sizes.width, sizes.height);
+renderer.render(scene, camera);
 
 
