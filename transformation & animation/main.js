@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-
+import gsap from 'gsap';
 
 // canvas
 const canvas = document.querySelector('#canvas');
@@ -47,7 +47,7 @@ const animation = () => {
 }
 
 animation();
-*/
+
 // clock
 const clock = new THREE.Clock();
 
@@ -56,7 +56,28 @@ const animation = () => {
   // console.log(elapsedTime);
   window.requestAnimationFrame(animation);
   // cube.rotation.x = Math.sin(elapsedTime);
-  cube.position.z = Math.cos(elapsedTime);
+  camera.position.x = Math.sin(elapsedTime);
+  camera.position.y = Math.cos(elapsedTime);
+  camera.lookAt(cube.position);
   renderer.render(scene, camera);
 }
 animation();
+
+*/
+
+const animate = () => {
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
+};
+
+animate();
+// gsap
+
+gsap.to(cube.rotation, {
+  y: Math.PI * 2,
+  duration: 1,
+  delay: 1,
+  ease: 'power2.inOut',
+  yoyo: true,
+  repeat: -1,
+})
