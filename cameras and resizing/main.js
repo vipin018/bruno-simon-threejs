@@ -1,6 +1,20 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
+let cursor;
+// cursor position
+window.addEventListener('mousemove', (e) => {
+  // to make the cursor value between 0 to 1
+  cursor = {
+    x: e.clientX / sizes.width - 0.5,
+    y: e.clientY / sizes.height - 0.5,
+  }
+  // console.log(cursor);
+
+
+});
+
+
 // canvas
 const canvas = document.querySelector('#canvas');
 
@@ -9,7 +23,7 @@ const scene = new THREE.Scene();
 
 // object
 const geometry = new THREE.BoxGeometry(1, 1, 1);
-const material = new THREE.MeshBasicMaterial({ color: "lightseagreen" });
+const material = new THREE.MeshNormalMaterial({ color: "lightseagreen" });
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 
@@ -35,11 +49,11 @@ const camera = new THREE.PerspectiveCamera(
 //   100
 // );
 
-camera.position.z = 5;
+camera.position.z = 3;
 scene.add(camera);
 
 // renderer
-const renderer = new THREE.WebGLRenderer({ canvas: canvas });
+const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
 renderer.setSize(sizes.width, sizes.height);
 
 // render
@@ -52,7 +66,13 @@ const controls = new OrbitControls(camera, renderer.domElement);
 function animate() {
   controls.update();
   requestAnimationFrame(animate);
-  // cube.rotation.x += 0.01;
   renderer.render(scene, camera);
+
+  // update camera position
+  camera.position.x = -Math.sin(cursor.x * Math.PI * 2) * 3;
+  camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 3;
+  camera.position.y = cursor.y * 5;
+
+  camera.lookAt(cube.position);
 }
 animate();
