@@ -1,24 +1,58 @@
-import './style.css'
-import javascriptLogo from './javascript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.js'
+import * as THREE from 'three';
+// import { GUI } from 'lil-gui';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+// Scene
+const scene = new THREE.Scene();
 
-document.querySelector('#app').innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more
-    </p>
-  </div>
-`
+// texture
+const loader = new THREE.TextureLoader();
+// const colorTexture = loader.load('./textures/door/color.jpg');
+// const alphaTexture = loader.load('./textures/door/alpha.jpg');
+// const heightTexture = loader.load('./textures/door/height.jpg');
+// const normalTexture = loader.load('./textures/door/normal.jpg');
+// const metalnessTexture = loader.load('./textures/door/metalness.jpg');
+// const roughnessTexture = loader.load('./textures/door/roughness.jpg');
+// const minecraftTexture = loader.load('./textures/minecraft.png');
+// const checkerboardTexture = loader.load('./textures/checkerboard-1024x1024.png');
+const checkerboardTexture = loader.load('./textures/checkerboard-8x8.png');
 
-setupCounter(document.querySelector('#counter'))
+
+// Object
+const geometry = new THREE.BoxGeometry(1, 1, 1);
+const material = new THREE.MeshBasicMaterial({ map: checkerboardTexture });
+const cube = new THREE.Mesh(geometry, material);
+scene.add(cube);
+
+
+
+// Camera
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.z = 3;
+scene.add(camera);
+
+// Renderer
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// lil-gui
+// const gui = new GUI();
+// const cubeFolder = gui.addFolder('Cube Controls');
+
+// // Color control
+// const cubeColor = { color: '#ff0000' };
+// cubeFolder.addColor(cubeColor, 'color').onChange((value) => {
+//   cube.material.color.set(value);
+// });
+
+// controls
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+
+// Animation Loop
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
