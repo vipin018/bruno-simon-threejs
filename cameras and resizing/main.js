@@ -9,7 +9,7 @@ const scene = new THREE.Scene();
 
 // object
 const geometry = new THREE.BoxGeometry(1, 1, 1);
-const material = new THREE.MeshBasicMaterial({ color: 0xafafaf });
+const material = new THREE.MeshBasicMaterial({ color: "lightseagreen" });
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 
@@ -20,8 +20,22 @@ const sizes = {
 }
 
 // camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
-camera.position.z = 3;
+const camera = new THREE.PerspectiveCamera(
+  75, // it is the field of view
+  sizes.width / sizes.height, // aspect ratio
+  0.1, // nearest view camera can see
+  100 // farthest view camera can see
+);
+// const camera = new THREE.OrthographicCamera(
+//   sizes.width / -2,
+//   sizes.width / 2,
+//   sizes.height / 2,
+//   sizes.height / -2,
+//   0.1,
+//   100
+// );
+
+camera.position.z = 5;
 scene.add(camera);
 
 // renderer
@@ -38,7 +52,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 function animate() {
   controls.update();
   requestAnimationFrame(animate);
-  cube.rotation.x += 0.01;
+  // cube.rotation.x += 0.01;
   renderer.render(scene, camera);
 }
 animate();
