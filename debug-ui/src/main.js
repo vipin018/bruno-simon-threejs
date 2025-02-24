@@ -32,7 +32,6 @@ cubeFolder.add(cube.rotation, 'z', 0, Math.PI * 2).name('Rotation Z');
 cubeFolder.add(cube.scale, 'x', 0, 5).name('Scale X');
 cubeFolder.add(cube.scale, 'y', 0, 5).name('Scale Y');
 cubeFolder.add(cube.scale, 'z', 0, 5).name('Scale Z');
-
 // Color control
 const cubeColor = { color: '#ff0000' };
 cubeFolder.addColor(cubeColor, 'color').onChange((value) => {
