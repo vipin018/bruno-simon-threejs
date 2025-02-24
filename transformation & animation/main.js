@@ -31,4 +31,10 @@ renderer.setSize(sizes.width, sizes.height);
 // render
 renderer.render(scene, camera);
 
+// Animation
 
+const animation = () => {
+  console.log('animation');
+}
+
+animation();
