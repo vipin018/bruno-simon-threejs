@@ -1,78 +1,71 @@
 import * as THREE from 'three';
+import { FlyControls } from 'three/examples/jsm/controls/FlyControls';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+// Cursor position
+let cursor = { x: 0, y: 0 };
 
-let cursor;
-// cursor position
 window.addEventListener('mousemove', (e) => {
-  // to make the cursor value between 0 to 1
-  cursor = {
-    x: e.clientX / sizes.width - 0.5,
-    y: e.clientY / sizes.height - 0.5,
-  }
-  // console.log(cursor);
-
-
+  cursor.x = e.clientX / sizes.width - 0.5;
+  cursor.y = e.clientY / sizes.height - 0.5;
 });
 
-
-// canvas
+// Canvas
 const canvas = document.querySelector('#canvas');
 
-// scene
+// Scene
 const scene = new THREE.Scene();
 
-// object
+// Object
 const geometry = new THREE.BoxGeometry(1, 1, 1);
-const material = new THREE.MeshNormalMaterial({ color: "lightseagreen" });
+const material = new THREE.MeshNormalMaterial();
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 
-// sizes
+// Sizes
 const sizes = {
   width: window.innerWidth,
-  height: window.innerHeight
-}
+  height: window.innerHeight,
+};
 
-// camera
-const camera = new THREE.PerspectiveCamera(
-  75, // it is the field of view
-  sizes.width / sizes.height, // aspect ratio
-  0.1, // nearest view camera can see
-  100 // farthest view camera can see
-);
-// const camera = new THREE.OrthographicCamera(
-//   sizes.width / -2,
-//   sizes.width / 2,
-//   sizes.height / 2,
-//   sizes.height / -2,
-//   0.1,
-//   100
-// );
-
+// Camera
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
 camera.position.z = 3;
 scene.add(camera);
 
-// renderer
-const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+// Renderer
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
 renderer.setSize(sizes.width, sizes.height);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Improves performance on high-DPI screens
 
-// render
-renderer.render(scene, camera);
-
-// orbit controls
+// OrbitControls
 const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.25;
+controls.enableZoom = false;
 
-// animate
+// FlyControls
+/*
+const controls = new FlyControls(camera, renderer.domElement);
+controls.movementSpeed = 10;
+controls.autoForward = false; // Disable constant forward movement
+controls.dragToLook = true; // Allows camera movement when clicking & dragging
+*/
+
+// Animate
 function animate() {
-  controls.update();
   requestAnimationFrame(animate);
-  renderer.render(scene, camera);
 
-  // update camera position
-  camera.position.x = -Math.sin(cursor.x * Math.PI * 2) * 3;
-  camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 3;
-  camera.position.y = cursor.y * 5;
+  // Update controls
+  controls.update(0.01); // Pass delta time for smoother movement
+
+  // Optional: Camera follows cursor
+  // camera.position.x = -Math.sin(cursor.x * Math.PI * 2) * 3;
+  // camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 3;
+  // camera.position.y = cursor.y * 5;
 
   camera.lookAt(cube.position);
+
+  renderer.render(scene, camera);
 }
+
 animate();
