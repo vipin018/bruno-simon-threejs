@@ -3,103 +3,99 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 
-// canvas
+// Canvas
 const canvas = document.querySelector('.webgl');
+if (!canvas) {
+  console.error('Canvas with class .webgl not found!');
+}
 
-
-// scene
+// Scene
 const scene = new THREE.Scene();
-// it is like a container that holds all the objects.
 
-// fonts
+// Texture
+const loader = new THREE.TextureLoader();
+const color = loader.load('./textures/text1.jpg');
+color.colorSpace = THREE.SRGBColorSpace;
+
+// Sizes
+const sizes = {
+  width: window.innerWidth,
+  height: window.innerHeight
+};
+
+// Camera
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
+camera.position.z = 3;
+scene.add(camera);
+
+// Renderer
+const renderer = new THREE.WebGLRenderer({ canvas });
+renderer.setSize(sizes.width, sizes.height);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+// Controls
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+
+// Load Font and Create Text
 const fontLoader = new FontLoader();
+let text;
 fontLoader.load('./fonts/helvetiker_regular.typeface.json', (font) => {
-  // console.log(font);
-  const textGeometry = new TextGeometry('crash', {
-    font: font,
+  const textGeometry = new TextGeometry('404', {
+    font,
     size: 0.5,
-    height: 0.2,
-    depth: 0.15,
+    height: 0.5,
+    depth: 0.1,
     curveSegments: 5,
     bevelEnabled: true,
     bevelThickness: 0.02,
     bevelSize: 0.01,
     bevelOffset: 0,
-    bevelSegments: 3,
-
+    bevelSegments: 30,
   });
-  const material = new THREE.MeshNormalMaterial({ color: "white", wireframe: false });
-  const text = new THREE.Mesh(textGeometry, material);
 
+  const material = new THREE.MeshBasicMaterial({ map: color, wireframe: true });
+  text = new THREE.Mesh(textGeometry, material);
   scene.add(text);
+
+  // Center the text
   textGeometry.computeBoundingBox();
-  console.log(textGeometry.boundingBox);
+  const center = new THREE.Vector3();
+  textGeometry.boundingBox.getCenter(center);
+  text.position.set(-center.x, -center.y, -center.z);
 });
 
-
-// bounding box
-
-
-// axes helper
-const axesHelper = new THREE.AxesHelper();
-scene.add(axesHelper);
-
-// grid helper
-const gridHelper = new THREE.GridHelper(20, 100, "gray", "white");
+// Axes and Grid Helpers
+scene.add(new THREE.AxesHelper(2));
+const gridHelper = new THREE.GridHelper(20, 100, 'gray', 'white');
+gridHelper.position.y = -0.26;
 scene.add(gridHelper);
 
-// it is the material of the object which in this case is a blue color.
-// meshmaterial is the combination of geometry and material
-
-// mesh
-const cube = new THREE.Mesh(
-  new THREE.BoxGeometry(1, 1, 1),
-  new THREE.MeshBasicMaterial({ color: 0x0000ff })
-);
-
-
-// add the mesh to the scene
-// scene.add(cube);
-
-// sizes
-const sizes = {
-  width: window.innerWidth,
-  height: window.innerHeight
-}
-
-// camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height);
-camera.position.z = 3;
-scene.add(camera);
-// renderer
-const renderer = new THREE.WebGLRenderer({
-  canvas: canvas,
-})
-renderer.setSize(sizes.width, sizes.height);
-renderer.render(scene, camera);
-
-// controls
-const controls = new OrbitControls(camera, canvas);
-controls.enableDamping = true;
-
-// animation
+// Animation
 const clock = new THREE.Clock();
-
 function animate() {
+  requestAnimationFrame(animate);
+
+  const elapsedTime = clock.getElapsedTime();
+
+  if (text) {
+    // text.rotation.x = elapsedTime;
+  }
+
+  camera.position.y = Math.sin(elapsedTime) * 0.5;
+  camera.position.x = Math.sin(elapsedTime) * 0.5;
+  camera.position.z = Math.cos(elapsedTime) * 3;
+
   controls.update();
   renderer.render(scene, camera);
-  requestAnimationFrame(animate);
-  const elapsedTime = clock.getElapsedTime();
-  cube.rotation.y = elapsedTime;
-  // camera.position.z = Math.sin(elapsedTime)*1.5;
-  // camera.position.x = Math.cos(elapsedTime)*2;
 }
 animate();
 
-// resize
+// Handle Window Resize
 window.addEventListener('resize', () => {
   sizes.width = window.innerWidth;
   sizes.height = window.innerHeight;
   camera.aspect = sizes.width / sizes.height;
   camera.updateProjectionMatrix();
+  renderer.setSize(sizes.width, sizes.height);
 });
