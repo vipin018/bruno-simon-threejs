@@ -14,8 +14,8 @@ const scene = new THREE.Scene();
 
 // Texture Loader
 const loader = new THREE.TextureLoader();
-const textures = Array.from({ length: 10 }, (_, i) => loader.load(`./textures/text${i + 1}.jpg`));
-textures.forEach(tex => tex.colorSpace = THREE.SRGBColorSpace);
+const torusKnotTexture = loader.load('./textures/text10.jpg');
+torusKnotTexture.colorSpace = THREE.SRGBColorSpace;
 
 // Sizes
 const sizes = {
@@ -41,7 +41,7 @@ controls.enableDamping = true;
 const fontLoader = new FontLoader();
 let text;
 fontLoader.load('./fonts/helvetiker_regular.typeface.json', (font) => {
-  const textGeometry = new TextGeometry('404', {
+  const textGeometry = new TextGeometry('Helloji', {
     font,
     size: 0.5,
     height: 0.5,
@@ -54,7 +54,7 @@ fontLoader.load('./fonts/helvetiker_regular.typeface.json', (font) => {
     bevelSegments: 30,
   });
 
-  const material = new THREE.MeshBasicMaterial({ map: textures[0] });
+  const material = new THREE.MeshBasicMaterial({ map: torusKnotTexture, wireframe: false });
   text = new THREE.Mesh(textGeometry, material);
   scene.add(text);
 
@@ -71,24 +71,15 @@ const gridHelper = new THREE.GridHelper(20, 100, 'gray', 'white');
 gridHelper.position.y = -0.26;
 scene.add(gridHelper);
 
-// Generate 100 random geometries with random textures
-const randomShapes = [];
-const geometryTypes = [
-  new THREE.BoxGeometry(),
-  new THREE.SphereGeometry(0.5, 16, 16),
-  new THREE.ConeGeometry(0.5, 1, 16),
-  new THREE.CylinderGeometry(0.3, 0.3, 1, 16),
-  new THREE.TorusGeometry(0.4, 0.15, 16, 32)
-];
+// Generate 100 TorusKnot geometries with texture text9
+const torusKnots = [];
+for (let i = 0; i < 150; i++) {
+  const geometry = new THREE.TorusGeometry(0.3, 0.2, 10, 100);
+  const material = new THREE.MeshBasicMaterial({ map: torusKnotTexture });
+  const mesh = new THREE.Mesh(geometry, material);
 
-for (let i = 0; i < 180; i++) {
-  const randomGeometry = geometryTypes[Math.floor(Math.random() * geometryTypes.length)].clone();
-  const randomTexture = textures[Math.floor(Math.random() * textures.length)];
-  const randomMaterial = new THREE.MeshBasicMaterial({ map: randomTexture });
-
-  const mesh = new THREE.Mesh(randomGeometry, randomMaterial);
   mesh.position.set(
-    (Math.random() - 0.5) * 20,
+    (Math.random() - 0.5) * 10,
     (Math.random() - 0.5) * 10,
     (Math.random() - 0.5) * 10
   );
@@ -96,7 +87,7 @@ for (let i = 0; i < 180; i++) {
   mesh.scale.setScalar(Math.random() * 2);
 
   scene.add(mesh);
-  randomShapes.push(mesh);
+  torusKnots.push(mesh);
 }
 
 // Animation
@@ -110,9 +101,9 @@ function animate() {
     // text.rotation.x = elapsedTime;
   }
 
-  camera.position.y = Math.sin(elapsedTime) * 0.5;
-  camera.position.x = Math.sin(elapsedTime) * 0.5;
-  camera.position.z = Math.cos(elapsedTime) * 3;
+  // camera.position.y = Math.sin(elapsedTime) * 0.5;
+  // camera.position.x = Math.sin(elapsedTime) * 0.5;
+  // camera.position.z = Math.cos(elapsedTime) * 3;
 
   controls.update();
   renderer.render(scene, camera);
