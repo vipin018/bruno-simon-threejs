@@ -12,10 +12,10 @@ if (!canvas) {
 // Scene
 const scene = new THREE.Scene();
 
-// Texture
+// Texture Loader
 const loader = new THREE.TextureLoader();
-const color = loader.load('./textures/text1.jpg');
-color.colorSpace = THREE.SRGBColorSpace;
+const textures = Array.from({ length: 10 }, (_, i) => loader.load(`./textures/text${i + 1}.jpg`));
+textures.forEach(tex => tex.colorSpace = THREE.SRGBColorSpace);
 
 // Sizes
 const sizes = {
@@ -54,7 +54,7 @@ fontLoader.load('./fonts/helvetiker_regular.typeface.json', (font) => {
     bevelSegments: 30,
   });
 
-  const material = new THREE.MeshBasicMaterial({ map: color, wireframe: true });
+  const material = new THREE.MeshBasicMaterial({ map: textures[0] });
   text = new THREE.Mesh(textGeometry, material);
   scene.add(text);
 
@@ -70,6 +70,34 @@ scene.add(new THREE.AxesHelper(2));
 const gridHelper = new THREE.GridHelper(20, 100, 'gray', 'white');
 gridHelper.position.y = -0.26;
 scene.add(gridHelper);
+
+// Generate 100 random geometries with random textures
+const randomShapes = [];
+const geometryTypes = [
+  new THREE.BoxGeometry(),
+  new THREE.SphereGeometry(0.5, 16, 16),
+  new THREE.ConeGeometry(0.5, 1, 16),
+  new THREE.CylinderGeometry(0.3, 0.3, 1, 16),
+  new THREE.TorusGeometry(0.4, 0.15, 16, 32)
+];
+
+for (let i = 0; i < 180; i++) {
+  const randomGeometry = geometryTypes[Math.floor(Math.random() * geometryTypes.length)].clone();
+  const randomTexture = textures[Math.floor(Math.random() * textures.length)];
+  const randomMaterial = new THREE.MeshBasicMaterial({ map: randomTexture });
+
+  const mesh = new THREE.Mesh(randomGeometry, randomMaterial);
+  mesh.position.set(
+    (Math.random() - 0.5) * 20,
+    (Math.random() - 0.5) * 10,
+    (Math.random() - 0.5) * 10
+  );
+  mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+  mesh.scale.setScalar(Math.random() * 2);
+
+  scene.add(mesh);
+  randomShapes.push(mesh);
+}
 
 // Animation
 const clock = new THREE.Clock();
