@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 // canvas
 const canvas = document.querySelector('.webgl');
 
@@ -26,8 +26,8 @@ scene.add(mesh);
 
 // sizes
 const sizes = {
-    width: 800,
-    height: 600
+    width: window.innerWidth,
+    height: window.innerHeight
 }
 
 // camera
@@ -41,4 +41,18 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height);
 renderer.render(scene, camera);
 
+// controls
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
 
+// animation
+const clock = new THREE.Clock();
+
+function animate() {
+    controls.update();
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+    const elapsedTime = clock.getElapsedTime();
+    mesh.rotation.y = elapsedTime;
+}
+animate();
