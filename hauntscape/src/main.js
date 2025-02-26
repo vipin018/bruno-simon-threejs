@@ -15,16 +15,49 @@ scene.add(directionalLight)
 
 const textureLoader = new THREE.TextureLoader();
 const alphaTexture = textureLoader.load("./textures/floor/alpha.jpg");
+const floorColorTexture = textureLoader.load("./textures/floor/ground/difussion.jpg");
+floorColorTexture.colorSpace = THREE.SRGBColorSpace;
+const floorARMTexture = textureLoader.load("./textures/floor/ground/arm.jpg");
+const floorNormalTexture = textureLoader.load("./textures/floor/ground/normal.jpg");
+const floorDisplacementTexture = textureLoader.load("./textures/floor/ground/displacement.jpg");
+
+floorColorTexture.repeat.set(10,10);
+floorARMTexture.repeat.set(10,10);
+floorNormalTexture.repeat.set(10,10);
+floorDisplacementTexture.repeat.set(10,10);
+floorColorTexture.wrapS = THREE.RepeatWrapping;
+floorColorTexture.wrapT = THREE.RepeatWrapping;
+floorARMTexture.wrapS = THREE.RepeatWrapping;
+floorARMTexture.wrapT = THREE.RepeatWrapping;
+floorNormalTexture.wrapS = THREE.RepeatWrapping;
+floorNormalTexture.wrapT = THREE.RepeatWrapping;
+floorDisplacementTexture.wrapS = THREE.RepeatWrapping;
+floorDisplacementTexture.wrapT = THREE.RepeatWrapping;
 
 
 // ground or floor
 const floor = new THREE.Mesh(
-  new THREE.PlaneGeometry(20, 20),
+  new THREE.PlaneGeometry(20, 20,100,100),
   new THREE.MeshStandardMaterial({
+    // wireframe: true,
     map: alphaTexture,
     transparent: true,
+    map: floorColorTexture,
+    aoMap: floorARMTexture,
+    roughnessMap: floorARMTexture,
+    metalnessMap: floorARMTexture,
+    normalMap: floorNormalTexture,
+    displacementMap: floorDisplacementTexture,
+    displacementScale: 0.5,
+    displacementBias: -0.2
   })
 )
+
+const gui = new GUI();
+gui.add(floor.material, 'displacementScale').min(0).max(1).step(0.001).name("Floor Displacement Scale");
+gui.add(floor.material, 'displacementBias').min(-1).max(1).step(0.001).name("Floor Displacement Bias");
+
+
 floor.rotation.x = -Math.PI / 2;
 scene.add(floor);
 
@@ -113,7 +146,7 @@ for (let i = 0; i < 50; i++) {
   // mesh
   const grave = new THREE.Mesh(graveGeometry, graveMaterial)
   graves.add(grave)
-  grave.position.set(x, 0.2, z)
+  grave.position.set(x, 0.25, z)
   grave.rotation.z = rotation*0.2;
   grave.rotation.x = rotation - 0.5;
 
