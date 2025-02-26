@@ -39,10 +39,9 @@ floorDisplacementTexture.wrapT = THREE.RepeatWrapping;
 const floor = new THREE.Mesh(
   new THREE.PlaneGeometry(20, 20,100,100),
   new THREE.MeshStandardMaterial({
-    // wireframe: true,
-    map: alphaTexture,
-    transparent: true,
-    map: floorColorTexture,
+    map: floorColorTexture, // ✅ Correctly assigns the main texture
+    alphaMap: alphaTexture, // ✅ Assigns the alpha texture properly
+    transparent: true, // ✅ Enables transparency
     aoMap: floorARMTexture,
     roughnessMap: floorARMTexture,
     metalnessMap: floorARMTexture,
@@ -50,7 +49,7 @@ const floor = new THREE.Mesh(
     displacementMap: floorDisplacementTexture,
     displacementScale: 0.5,
     displacementBias: -0.2
-  })
+})
 )
 
 const gui = new GUI();
@@ -65,10 +64,23 @@ scene.add(floor);
 const house = new THREE.Group()
 scene.add(house)
 
+const wallColorTexture = textureLoader.load("./textures/wall/diffusion.jpg");
+wallColorTexture.colorSpace = THREE.SRGBColorSpace;
+const wallARMTexture = textureLoader.load("./textures/wall/arm.jpg");
+const wallNormalTexture = textureLoader.load("./textures/wall/normal.jpg");
+
+
+
 // walls
 const walls = new THREE.Mesh(
   new THREE.BoxGeometry(4, 2.5, 4),
-  new THREE.MeshStandardMaterial({})
+  new THREE.MeshStandardMaterial({
+    map: wallColorTexture,
+    aoMap: wallARMTexture,
+    roughnessMap: wallARMTexture,
+    metalnessMap: wallARMTexture,
+    normalMap: wallNormalTexture,
+  })
 )
 walls.position.y = 1;
 house.add(walls);
