@@ -13,10 +13,17 @@ const directionalLight = new THREE.DirectionalLight("white", 1.5)
 directionalLight.position.set(3, 2, -8)
 scene.add(directionalLight)
 
+const textureLoader = new THREE.TextureLoader();
+const alphaTexture = textureLoader.load("./textures/floor/alpha.jpg");
+
+
 // ground or floor
 const floor = new THREE.Mesh(
   new THREE.PlaneGeometry(20, 20),
-  new THREE.MeshStandardMaterial()
+  new THREE.MeshStandardMaterial({
+    map: alphaTexture,
+    transparent: true,
+  })
 )
 floor.rotation.x = -Math.PI / 2;
 scene.add(floor);
