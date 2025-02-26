@@ -1,17 +1,83 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { Timer } from 'three/addons/misc/Timer.js';
+// import { Timer } from 'three/addons/misc/Timer.js';
 import { GUI } from 'lil-gui';
+import gsap from "gsap";
 
 const canvas = document.querySelector('.webgl');
 const scene = new THREE.Scene();
 
-const ambientLight = new THREE.AmbientLight("white", 0.5)
-scene.add(ambientLight);
+const fog = new THREE.Fog(0x222222, 0.5, 15);
+scene.fog = fog;
 
-const directionalLight = new THREE.DirectionalLight("white", 1.5)
-directionalLight.position.set(3, 2, -8)
-scene.add(directionalLight)
+
+const ambientLight = new THREE.AmbientLight("#383838");
+ambientLight.intensity = 0.5; 
+
+const directionalLight = new THREE.DirectionalLight("#6A0DAD", 1.5);
+directionalLight.position.set(2, 4, -5);
+scene.add(directionalLight);
+
+const spotLight = new THREE.SpotLight("red", 25, 100, 2)
+spotLight.position.set(0, 2, 2)
+spotLight.target.position.set(0, 0, 0)
+scene.add(spotLight)
+scene.add(spotLight.target)
+
+const torchLights = [];
+
+for (let i = 0; i < 2; i++) {
+    const torch = new THREE.PointLight("#ff5500", 1.5, 4);
+    torch.position.set(i === 0 ? -1.5 : 1.5, 1.8, 2.2);
+    torchLights.push(torch);
+    scene.add(torch);
+}
+
+function animateTorches() {
+    torchLights.forEach((torch) => {
+        torch.intensity = 1.5 + Math.sin(Date.now() * 0.005) * 0.7; 
+    });
+    requestAnimationFrame(animateTorches);
+}
+animateTorches();
+
+const lightning = new THREE.PointLight("#ffffff", 0, 10);
+scene.add(lightning);
+
+function animateLightning() {
+    if (Math.random() > 0.95) { // 2% chance of lightning
+        lightning.intensity = 900;
+        setTimeout(() => lightning.intensity = 0, 100);
+    }
+    requestAnimationFrame(animateLightning);
+}
+animateLightning();
+
+
+const ghostLights = [];
+
+const colors = ["#ff4500", "#8b008b", "#d4af37"]; // Deep Orange, Dark Magenta, Haunted Gold
+
+for (let i = 0; i < 3; i++) {
+    const light = new THREE.PointLight(colors[i], 3, 5); // Increased intensity & range for a stronger glow
+    light.position.set((Math.random() - 0.5) * 6, 1.2 + Math.random(), (Math.random() - 0.5) * 6);
+
+    // Add a flickering effect
+    setInterval(() => {
+        light.intensity = 2 + Math.sin(Date.now() * 0.005) * 1.5;
+    }, 50);
+
+    ghostLights.push(light);
+    scene.add(light);
+}
+
+
+const windowLight = new THREE.PointLight("#ffaa00", 2, 6);
+windowLight.position.set(0, 2, -1);
+scene.add(windowLight);
+
+const hemisphereLight = new THREE.HemisphereLight("#383838", "#000000", 0.5); 
+scene.add(hemisphereLight);
 
 const textureLoader = new THREE.TextureLoader();
 const alphaTexture = textureLoader.load("./textures/floor/alpha.jpg");
@@ -104,6 +170,7 @@ roofARMTexture.wrapT = THREE.RepeatWrapping;
 const roof = new THREE.Mesh(
   new THREE.ConeGeometry(3.5, 1.5, 4),
   new THREE.MeshStandardMaterial({
+    color:"#3A2615",
     map: roofColorTexture,
     aoMap: roofARMTexture,
     roughnessMap: roofARMTexture,
@@ -125,8 +192,6 @@ const door = new THREE.Mesh(
   new THREE.BoxGeometry(1, 1.5, 0.2),
   new THREE.MeshStandardMaterial({
     color:"brown",
-    opacity: 0.9,
-    transparent: true,
     map: doorColorTexture,
     aoMap: doorARMTexture,
     roughnessMap: doorARMTexture,
@@ -193,7 +258,12 @@ house.add(bush1, bush2, bush3);
 // tree
 const treeGeometry = new THREE.CylinderGeometry(0.2, 0.2, 3)
 const treeMaterial = new THREE.MeshStandardMaterial({
- 
+  color:"#712E13",
+  map: roofColorTexture,
+  aoMap: roofARMTexture,
+  roughnessMap: roofARMTexture,
+  metalnessMap: roofARMTexture,
+  normalMap: roofNormalTexture,
 })
 const tree = new THREE.Mesh(treeGeometry, treeMaterial)
 tree.position.set(5, 0.2, 2.2)
@@ -214,10 +284,20 @@ const treeLeaf = new THREE.Mesh(
 treeLeaf.position.set(5, 2.5, 2.2)
 house.add(treeLeaf);
 
+const graveColorTexture = textureLoader.load("./textures/grave/diff.jpg");
+graveColorTexture.colorSpace = THREE.SRGBColorSpace;
+const graveARMTexture = textureLoader.load("./textures/grave/arm.jpg");
+const graveNormalTexture = textureLoader.load("./textures/grave/nor.jpg");
+
 // graves
 const graveGeometry = new THREE.BoxGeometry(0.6, 0.8, 0.2)
-const graveMaterial = new THREE.MeshStandardMaterial({})
-
+const graveMaterial = new THREE.MeshStandardMaterial({
+  map: graveColorTexture,
+  aoMap: graveARMTexture,
+  roughnessMap: graveARMTexture,
+  metalnessMap: graveARMTexture,
+  normalMap: graveNormalTexture,
+})
 const graves = new THREE.Group()
 scene.add(graves)
 
@@ -252,19 +332,41 @@ const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
 })
 renderer.setSize(sizes.width, sizes.height);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.render(scene, camera);
 
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 
+directionalLight.castShadow = true;
+spotLight.castShadow = true;
+torchLights.forEach(torch => torch.castShadow = true);
+lightning.castShadow = true;
+ghostLights.forEach(light => light.castShadow = true);
+windowLight.castShadow = true;
 
-const timer = new Timer()
+floor.receiveShadow = true;
+walls.castShadow = true;
+walls.receiveShadow = true;
+roof.castShadow = true;
+roof.receiveShadow = true;
+door.castShadow = true;
+door.receiveShadow = true;
+windoww.castShadow = true;
+bush1.castShadow = true;
+bush2.castShadow = true;
+bush3.castShadow = true;
+graves.castShadow = true;
+
+// const timer = new Timer()
 
 function animate() {
   controls.update();
   renderer.render(scene, camera);
   requestAnimationFrame(animate);
-  const elapsedTime = timer.elapsedTime;
+  // const elapsedTime = timer.elapsedTime;
   // mesh.rotation.y = elapsedTime;
 }
 animate();
@@ -277,4 +379,40 @@ function resize() {
   renderer.setSize(sizes.width, sizes.height);
 }
 resize();
+function spookyCameraAnimation() {
+  const tl = gsap.timeline({ repeat: -1, yoyo: true, ease: "power2.inOut" });
 
+  tl.to(camera.position, {
+      x: "-=0.5", // Gentle horizontal drift
+      y: "-=2", // Slow floating motion
+      z: "-=5", // Slight creeping zoom
+      duration: 4, // Smooth transitions
+  })
+  .to(camera.rotation, {
+      x: "+=5", // Subtle eerie tilt
+      y: "+=3",
+      duration: 4,
+  }, "<"); // Syncs with position movement
+
+  // Add slight unpredictable shakes (but very smooth)
+  gsap.to(camera.position, {
+      x: "-=1",
+      y: "-=1",
+      duration: 2,
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut",
+  });
+
+  gsap.to(camera.rotation, {
+      x: "-=2",
+      y: "-=2",
+      duration: 3,
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut",
+  });
+}
+
+// Start animation
+// spookyCameraAnimation();

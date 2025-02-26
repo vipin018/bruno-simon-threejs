@@ -263,6 +263,11 @@ fsevents@~2.3.2, fsevents@~2.3.3:
   resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.3.tgz#cac6407785d03675a2a5e1a5305c697b347d90d6"
   integrity sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==
 
+gsap@^3.12.7:
+  version "3.12.7"
+  resolved "https://registry.yarnpkg.com/gsap/-/gsap-3.12.7.tgz#1b690def901ac9b21d4909f39c2b52418154463d"
+  integrity sha512-V4GsyVamhmKefvcAKaoy0h6si0xX7ogwBoBSs2CTJwt7luW0oZzC0LhdkyuKV8PJAXr7Yaj8pMjCKD4GJ+eEMg==
+
 lil-gui@^0.20.0:
   version "0.20.0"
   resolved "https://registry.yarnpkg.com/lil-gui/-/lil-gui-0.20.0.tgz#c970391fcde9f88d5425b2648114c24d9bd30243"
