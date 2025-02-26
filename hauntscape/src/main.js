@@ -85,58 +85,131 @@ const walls = new THREE.Mesh(
 walls.position.y = 1;
 house.add(walls);
 
+const roofColorTexture = textureLoader.load("./textures/roof/difussion.jpg");
+roofColorTexture.colorSpace = THREE.SRGBColorSpace;
+const roofARMTexture = textureLoader.load("./textures/roof/arm.jpg");
+const roofNormalTexture = textureLoader.load("./textures/roof/normal.jpg");
+
+roofColorTexture.repeat.set(3,1);
+roofColorTexture.wrapS = THREE.RepeatWrapping;
+roofColorTexture.wrapT = THREE.RepeatWrapping;
+roofNormalTexture.repeat.set(3,1);
+roofNormalTexture.wrapS = THREE.RepeatWrapping;
+roofNormalTexture.wrapT = THREE.RepeatWrapping;
+roofARMTexture.repeat.set(3,1);
+roofARMTexture.wrapS = THREE.RepeatWrapping;
+roofARMTexture.wrapT = THREE.RepeatWrapping;
+
 // roof
 const roof = new THREE.Mesh(
   new THREE.ConeGeometry(3.5, 1.5, 4),
-  new THREE.MeshStandardMaterial({})
+  new THREE.MeshStandardMaterial({
+    map: roofColorTexture,
+    aoMap: roofARMTexture,
+    roughnessMap: roofARMTexture,
+    metalnessMap: roofARMTexture,
+    normalMap: roofNormalTexture,
+  })
 )
 roof.position.y = 3;
 roof.rotation.y = Math.PI / 4;
 house.add(roof);
 
+const doorColorTexture = textureLoader.load("./textures/door/diff.jpg");
+doorColorTexture.colorSpace = THREE.SRGBColorSpace;
+const doorARMTexture = textureLoader.load("./textures/door/arm.jpg");
+const doorNormalTexture = textureLoader.load("./textures/door/nor.jpg");
+
 // door
 const door = new THREE.Mesh(
   new THREE.BoxGeometry(1, 1.5, 0.2),
-  new THREE.MeshStandardMaterial({})
+  new THREE.MeshStandardMaterial({
+    color:"brown",
+    opacity: 0.9,
+    transparent: true,
+    map: doorColorTexture,
+    aoMap: doorARMTexture,
+    roughnessMap: doorARMTexture,
+    metalnessMap: doorARMTexture,
+    normalMap: doorNormalTexture,
+  })
 )
 door.position.y = 0.8;
 door.position.z = 2;
 house.add(door);
 
+const windowColorTexture = textureLoader.load("./textures/window/diff.jpg");
+windowColorTexture.colorSpace = THREE.SRGBColorSpace;
+const windowARMTexture = textureLoader.load("./textures/window/arm.jpg");
+const windowNormalTexture = textureLoader.load("./textures/window/nor.jpg");
+
+
+
 const windoww = new THREE.Mesh(
   new THREE.BoxGeometry(0.7, 0.5, 0.2),
-  new THREE.MeshStandardMaterial({})
+  new THREE.MeshStandardMaterial({
+    map: windowColorTexture,
+    aoMap: windowARMTexture,
+    roughnessMap: windowARMTexture,
+    metalnessMap: windowARMTexture,
+    normalMap: windowNormalTexture,
+  })
 )
 windoww.position.y = 1.8;
 windoww.position.z = 2;
 windoww.position.x = 1.5;
 house.add(windoww);
 
+const bushColorTexture = textureLoader.load("./textures/bushes/diff.jpg");
+bushColorTexture.colorSpace = THREE.SRGBColorSpace;
+const bushARMTexture = textureLoader.load("./textures/bushes/arm.jpg");
+const bushNormalTexture = textureLoader.load("./textures/bushes/nor.jpg");
+
+
 // bushes
 const bushGeometry = new THREE.SphereGeometry(0.5, 16, 16)
-const bushMaterial = new THREE.MeshStandardMaterial({})
+const bushMaterial = new THREE.MeshStandardMaterial({
+  color:"lightgreen",
+  map: bushColorTexture,
+    aoMap: bushARMTexture,
+    roughnessMap: bushARMTexture,
+    metalnessMap: bushARMTexture,
+    normalMap: bushNormalTexture,
+})
 const bush1 = new THREE.Mesh(bushGeometry, bushMaterial)
 bush1.position.set(1, 0.2, 2.2)
 bush1.scale.set(1.2, 1, 1)
+bush1.rotation.x = -0.75
 const bush2 = new THREE.Mesh(bushGeometry, bushMaterial)
 bush2.position.set(1.7, 0.2, 2.2)
 bush2.scale.set(0.5, 0.8, 0.5)
+bush2.rotation.x = -0.75
 const bush3 = new THREE.Mesh(bushGeometry, bushMaterial)
 bush3.position.set(-1.5, 0.2, 2.2)
 bush3.scale.set(1, 0.8, 0.8)
+bush3.rotation.x = -0.75
 house.add(bush1, bush2, bush3);
 
 // tree
 const treeGeometry = new THREE.CylinderGeometry(0.2, 0.2, 3)
-const treeMaterial = new THREE.MeshStandardMaterial({})
+const treeMaterial = new THREE.MeshStandardMaterial({
+ 
+})
 const tree = new THREE.Mesh(treeGeometry, treeMaterial)
 tree.position.set(5, 0.2, 2.2)
 house.add(tree);
 
 // tree leaf
 const treeLeaf = new THREE.Mesh(
-  new THREE.CylinderGeometry(0.2, 0.8, 3),
-  new THREE.MeshStandardMaterial({})
+  new THREE.CylinderGeometry(0.01, 0.8, 3),
+  new THREE.MeshStandardMaterial({
+    color: "lime",
+    map:bushColorTexture,
+    aoMap: bushARMTexture,
+    roughnessMap: bushARMTexture,
+    metalnessMap: bushARMTexture,
+    normalMap: bushNormalTexture,
+  })
 )
 treeLeaf.position.set(5, 2.5, 2.2)
 house.add(treeLeaf);
