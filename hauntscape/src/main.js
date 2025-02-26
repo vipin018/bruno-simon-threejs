@@ -14,8 +14,8 @@ directionalLight.position.set(3, 2, -8)
 scene.add(directionalLight)
 
 // ground or floor
-const floor  = new THREE.Mesh(
-  new THREE.PlaneGeometry(20,20),
+const floor = new THREE.Mesh(
+  new THREE.PlaneGeometry(20, 20),
   new THREE.MeshStandardMaterial()
 )
 floor.rotation.x = -Math.PI / 2;
@@ -27,7 +27,7 @@ scene.add(house)
 
 // walls
 const walls = new THREE.Mesh(
-  new THREE.BoxGeometry(4,2.5,4),
+  new THREE.BoxGeometry(4, 2.5, 4),
   new THREE.MeshStandardMaterial({})
 )
 walls.position.y = 1;
@@ -35,7 +35,7 @@ house.add(walls);
 
 // roof
 const roof = new THREE.Mesh(
-  new THREE.ConeGeometry(3.5,1.5,4),
+  new THREE.ConeGeometry(3.5, 1.5, 4),
   new THREE.MeshStandardMaterial({})
 )
 roof.position.y = 3;
@@ -44,7 +44,7 @@ house.add(roof);
 
 // door
 const door = new THREE.Mesh(
-  new THREE.BoxGeometry(1,1.5,0.2),
+  new THREE.BoxGeometry(1, 1.5, 0.2),
   new THREE.MeshStandardMaterial({})
 )
 door.position.y = 0.8;
@@ -52,7 +52,7 @@ door.position.z = 2;
 house.add(door);
 
 const windoww = new THREE.Mesh(
-  new THREE.BoxGeometry(0.7,0.5,0.2),
+  new THREE.BoxGeometry(0.7, 0.5, 0.2),
   new THREE.MeshStandardMaterial({})
 )
 windoww.position.y = 1.8;
@@ -60,34 +60,64 @@ windoww.position.z = 2;
 windoww.position.x = 1.5;
 house.add(windoww);
 
+// bushes
+const bushGeometry = new THREE.SphereGeometry(0.5, 16, 16)
+const bushMaterial = new THREE.MeshStandardMaterial({})
+const bush1 = new THREE.Mesh(bushGeometry, bushMaterial)
+bush1.position.set(1, 0.2, 2.2)
+bush1.scale.set(1.2, 1, 1)
+const bush2 = new THREE.Mesh(bushGeometry, bushMaterial)
+bush2.position.set(1.7, 0.2, 2.2)
+bush2.scale.set(0.5, 0.8, 0.5)
+const bush3 = new THREE.Mesh(bushGeometry, bushMaterial)
+bush3.position.set(-1.5, 0.2, 2.2)
+bush3.scale.set(1, 0.8, 0.8)
+house.add(bush1, bush2, bush3);
+
 // tree
-const tree = new THREE.Mesh(
-  new THREE.CylinderGeometry(0.2,0.2,3),
-  new THREE.MeshStandardMaterial({})
-)
-tree.position.y = 1;
-tree.position.z = 2;
-tree.position.x = 5;
+const treeGeometry = new THREE.CylinderGeometry(0.2, 0.2, 3)
+const treeMaterial = new THREE.MeshStandardMaterial({})
+const tree = new THREE.Mesh(treeGeometry, treeMaterial)
+tree.position.set(5, 0.2, 2.2)
 house.add(tree);
 
 // tree leaf
 const treeLeaf = new THREE.Mesh(
-  new THREE.CylinderGeometry(0.2,0.8,3),
+  new THREE.CylinderGeometry(0.2, 0.8, 3),
   new THREE.MeshStandardMaterial({})
 )
-treeLeaf.position.y = 2;
-treeLeaf.position.z = 2;
-treeLeaf.position.x = 5;
+treeLeaf.position.set(5, 2.5, 2.2)
 house.add(treeLeaf);
 
-// 
+// graves
+const graveGeometry = new THREE.BoxGeometry(0.6, 0.8, 0.2)
+const graveMaterial = new THREE.MeshStandardMaterial({})
+
+const graves = new THREE.Group()
+scene.add(graves)
+
+for (let i = 0; i < 50; i++) {
+
+  const angle = Math.random() * Math.PI * 2;
+  const radius = 4.5 + Math.random() * 5;
+  const x = Math.sin(angle) * radius;
+  const z = Math.cos(angle) * radius;
+  const rotation = Math.random();
+  // mesh
+  const grave = new THREE.Mesh(graveGeometry, graveMaterial)
+  graves.add(grave)
+  grave.position.set(x, 0.2, z)
+  grave.rotation.z = rotation*0.2;
+  grave.rotation.x = rotation - 0.5;
+
+}
 
 const sizes = {
   width: window.innerWidth,
   height: window.innerHeight
 }
 
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height,0.1,100);
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
 camera.position.z = 5;
 camera.position.y = 2;
 camera.position.x = 4;
