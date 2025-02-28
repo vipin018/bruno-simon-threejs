@@ -7,12 +7,12 @@ import gsap from "gsap";
 const canvas = document.querySelector('.webgl');
 const scene = new THREE.Scene();
 
-const fog = new THREE.Fog(0x222222, 0.5, 15);
+const fog = new THREE.Fog(0x222222, 0.05, 15);
 scene.fog = fog;
 
 
 const ambientLight = new THREE.AmbientLight("#383838");
-ambientLight.intensity = 0.5; 
+ambientLight.intensity = 50; 
 
 const directionalLight = new THREE.DirectionalLight("#6A0DAD", 1.5);
 directionalLight.position.set(2, 4, -5);
@@ -53,7 +53,7 @@ function animateLightning() {
 }
 animateLightning();
 
-
+// the above function is for the lightning effect how it works ? so basically it is a function that is called every frame and it checks if the random number is greater than 0.95 if it is it will set the intensity of the lightning to 900 and then it will set the intensity to 0 after 100ms in simple word ye function jab kabhi bhi math.random ki value
 const ghostLights = [];
 
 const colors = ["#ff4500", "#8b008b", "#d4af37"]; // Deep Orange, Dark Magenta, Haunted Gold
