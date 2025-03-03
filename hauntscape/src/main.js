@@ -43,7 +43,6 @@ animateTorches();
 
 const lightning = new THREE.PointLight("#ffffff", 0, 10);
 scene.add(lightning);
-
 function animateLightning() {
     if (Math.random() > 0.95) { // 2% chance of lightning
         lightning.intensity = 900;
@@ -70,7 +69,6 @@ for (let i = 0; i < 3; i++) {
     ghostLights.push(light);
     scene.add(light);
 }
-
 
 const windowLight = new THREE.PointLight("#ffaa00", 2, 6);
 windowLight.position.set(0, 2, -1);
