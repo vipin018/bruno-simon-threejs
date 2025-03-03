@@ -133,8 +133,6 @@ wallColorTexture.colorSpace = THREE.SRGBColorSpace;
 const wallARMTexture = textureLoader.load("./textures/wall/arm.jpg");
 const wallNormalTexture = textureLoader.load("./textures/wall/normal.jpg");
 
-
-
 // walls
 const walls = new THREE.Mesh(
   new THREE.BoxGeometry(4, 2.5, 4),
@@ -364,8 +362,6 @@ function animate() {
   controls.update();
   renderer.render(scene, camera);
   requestAnimationFrame(animate);
-  // const elapsedTime = timer.elapsedTime;
-  // mesh.rotation.y = elapsedTime;
 }
 animate();
 
@@ -411,6 +407,3 @@ function spookyCameraAnimation() {
       ease: "sine.inOut",
   });
 }
-
-// Start animation
-// spookyCameraAnimation();
