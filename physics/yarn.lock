@@ -227,6 +227,11 @@
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-1.0.6.tgz#628effeeae2064a1b4e79f78e81d87b7e5fc7b50"
   integrity sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==
 
+cannon-es@^0.20.0:
+  version "0.20.0"
+  resolved "https://registry.yarnpkg.com/cannon-es/-/cannon-es-0.20.0.tgz#bf2f62a674701f37e3d861c90668a32d4d32f082"
+  integrity sha512-eZhWTZIkFOnMAJOgfXJa9+b3kVlvG+FX4mdkpePev/w/rP5V8NRquGyEozcjPfEoXUlb+p7d9SUcmDSn14prOA==
+
 esbuild@^0.25.0:
   version "0.25.0"
   resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.25.0.tgz#0de1787a77206c5a79eeb634a623d39b5006ce92"
@@ -262,6 +267,11 @@ fsevents@~2.3.2, fsevents@~2.3.3:
   version "2.3.3"
   resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.3.tgz#cac6407785d03675a2a5e1a5305c697b347d90d6"
   integrity sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==
+
+lil-gui@^0.20.0:
+  version "0.20.0"
+  resolved "https://registry.yarnpkg.com/lil-gui/-/lil-gui-0.20.0.tgz#c970391fcde9f88d5425b2648114c24d9bd30243"
+  integrity sha512-k7Ipr0ztqslMA2XvM5z5ZaWhxQtnEOwJBfI/hmSuRh6q4iMG9L0boqqrnZSzBR1jzyJ28OMl47l65ILzRe1TdA==
 
 nanoid@^3.3.8:
   version "3.3.9"
