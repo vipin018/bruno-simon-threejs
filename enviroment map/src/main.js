@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import GUI from 'lil-gui'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
+import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader.js'
 /**
  * Loaders
  */
@@ -45,6 +46,20 @@ scene.backgroundRotation.y = 1;
 scene.environmentRotation.y = 1;
 
 */
+
+const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(512, {
+  type: THREE.HalfFloatType,
+  format: THREE.RGBFormat,
+  magFilter: THREE.LinearFilter,
+  minFilter: THREE.LinearFilter,
+  encoding: THREE.sRGBEncoding,
+  colorSpace: THREE.SRGBColorSpace,
+});  
+
+scene.environment = cubeRenderTarget.texture;
+
+const cubeCamera = new THREE.CubeCamera(0.1, 100, cubeRenderTarget);
+scene.add(cubeCamera);
 
 rgbeLoader.load('/environmentMaps/1/2k.hdr', function (envMap) {
   envMap.mapping = THREE.EquirectangularReflectionMapping;
@@ -153,6 +168,10 @@ const tick = () => {
 
   if(holyDonut){
     holyDonut.rotation.x = elapsedTime
+    cubeCamera.update(renderer, scene)
+  }
+    if(torusKnot){
+    torusKnot.rotation.y = elapsedTime
   }
 }
 
