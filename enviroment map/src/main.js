@@ -2,12 +2,12 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import GUI from 'lil-gui'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 /**
  * Loaders
  */
-const loader = new GLTFLoader();
-
+const gltfLoader = new GLTFLoader();
+const rgbeLoader = new RGBELoader();
 
 
 /**
@@ -26,6 +26,7 @@ const scene = new THREE.Scene()
  * Enviroment Map
  */
 
+/*
 const envMap = new THREE.CubeTextureLoader().load([
   '/environmentMaps/2/px.png',
   '/environmentMaps/2/nx.png',
@@ -37,12 +38,30 @@ const envMap = new THREE.CubeTextureLoader().load([
 
 scene.background = envMap;
 scene.environment = envMap;
+scene.environmentIntensity = 1;
+scene.backgroundIntensity = 1;
+scene.backgroundBlurriness = 0;
+scene.backgroundRotation.y = 1;
+scene.environmentRotation.y = 1;
+
+*/
+
+rgbeLoader.load('/environmentMaps/0/2k.hdr', function (envMap) {
+  envMap.mapping = THREE.EquirectangularReflectionMapping;
+  scene.background = envMap;
+  scene.environment = envMap;
+  scene.environmentIntensity = 1;
+  scene.backgroundIntensity = 1;
+  scene.backgroundBlurriness = 0;
+  scene.backgroundRotation.y = 1;
+  scene.environmentRotation.y = 1;
+});
 
 /**
  * 
  */
 
-loader.load('/models/FlightHelmet/glTF/FlightHelmet.gltf', function (gltf) {
+gltfLoader.load('/models/FlightHelmet/glTF/FlightHelmet.gltf', function (gltf) {
   scene.add(gltf.scene);
   gltf.scene.scale.set(10, 10, 10);
 });
@@ -126,3 +145,9 @@ const tick = () => {
 }
 
 tick()
+
+gui.add(scene, 'environmentIntensity').min(0).max(1).step(0.001).name('environmentIntensity');
+gui.add(scene, 'backgroundIntensity').min(0).max(1).step(0.001).name('backgroundIntensity');
+gui.add(scene, 'backgroundBlurriness').min(0).max(1).step(0.0001).name('backgroundBlurriness');
+gui.add(scene.environmentRotation, 'y').min(0).max(Math.PI * 2).step(0.001).name('environmentRotation');
+gui.add(scene.backgroundRotation, 'y').min(0).max(Math.PI * 2).step(0.001).name('backgroundRotation');
