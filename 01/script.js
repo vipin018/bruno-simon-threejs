@@ -53,5 +53,6 @@ function animate() {
     requestAnimationFrame(animate);
     const elapsedTime = clock.getElapsedTime();
     mesh.rotation.y = elapsedTime;
+    mesh.position.x = Math.sin(elapsedTime);
 }
 animate();
