@@ -3,77 +3,36 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import GUI from 'lil-gui'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
-import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader.js'
+
 /**
  * Loaders
  */
 const gltfLoader = new GLTFLoader();
 const rgbeLoader = new RGBELoader();
 
-
 /**
  * Base
  */
 // Debug
-const gui = new GUI()
+const gui = new GUI();
 
 // Canvas
-const canvas = document.querySelector('canvas.webgl')
+const canvas = document.querySelector('canvas.webgl');
 
 // Scene
-const scene = new THREE.Scene()
+const scene = new THREE.Scene();
 
 /**
- * Enviroment Map
+ * Environment Map
  */
-
-/*
-const envMap = new THREE.CubeTextureLoader().load([
-  '/environmentMaps/2/px.png',
-  '/environmentMaps/2/nx.png',
-  '/environmentMaps/2/py.png',
-  '/environmentMaps/2/ny.png',
-  '/environmentMaps/2/pz.png',
-  '/environmentMaps/2/nz.png',
-]);
-
-scene.background = envMap;
-scene.environment = envMap;
-scene.environmentIntensity = 1;
-scene.backgroundIntensity = 1;
-scene.backgroundBlurriness = 0;
-scene.backgroundRotation.y = 1;
-scene.environmentRotation.y = 1;
-
-*/
-
-const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(512, {
-  type: THREE.HalfFloatType,
-  format: THREE.RGBFormat,
-  magFilter: THREE.LinearFilter,
-  minFilter: THREE.LinearFilter,
-  encoding: THREE.sRGBEncoding,
-  colorSpace: THREE.SRGBColorSpace,
-});  
-
-scene.environment = cubeRenderTarget.texture;
-
-const cubeCamera = new THREE.CubeCamera(0.1, 100, cubeRenderTarget);
-scene.add(cubeCamera);
-
 rgbeLoader.load('/environmentMaps/1/2k.hdr', function (envMap) {
   envMap.mapping = THREE.EquirectangularReflectionMapping;
   scene.background = envMap;
   scene.environment = envMap;
-  scene.environmentIntensity = 1;
-  scene.backgroundIntensity = 1;
-  scene.backgroundBlurriness = 0;
-  scene.backgroundRotation.y = 1;
-  scene.environmentRotation.y = 1;
-  scene.wireframe = true;
 });
+
 /**
- * 
+ * GLTF Model
  */
 gltfLoader.load('/models/FlightHelmet/glTF/FlightHelmet.gltf', function (gltf) {
   scene.add(gltf.scene);
@@ -90,21 +49,19 @@ const torusKnot = new THREE.Mesh(
     metalness: 1,
     color: '#aaaaaa',
   })
-)
-torusKnot.position.y = 4
-torusKnot.position.x = -3
-scene.add(torusKnot)
-// torusKnot.material.envMap = envMap;
+);
+torusKnot.position.set(-3, 4, 0);
+scene.add(torusKnot);
 
+/**
+ * Holy Donut
+ */
 const holyDonut = new THREE.Mesh(
   new THREE.TorusGeometry(6, 0.5, 100, 32),
-  new THREE.MeshBasicMaterial({
-    color: 'white',
-  })
-)
-holyDonut.position.y = 3.5
-// holyDonut.position.x = 4
-scene.add(holyDonut)
+  new THREE.MeshBasicMaterial({ color: 'white' })
+);
+holyDonut.position.y = 3.5;
+scene.add(holyDonut);
 
 /**
  * Sizes
@@ -112,73 +69,64 @@ scene.add(holyDonut)
 const sizes = {
   width: window.innerWidth,
   height: window.innerHeight
-}
+};
+
 window.addEventListener('resize', () => {
-  // Update sizes
-  sizes.width = window.innerWidth
-  sizes.height = window.innerHeight
+  sizes.width = window.innerWidth;
+  sizes.height = window.innerHeight;
+  
+  camera.aspect = sizes.width / sizes.height;
+  camera.updateProjectionMatrix();
 
-  // Update camera
-  camera.aspect = sizes.width / sizes.height
-  camera.updateProjectionMatrix()
-
-  // Update renderer
-  renderer.setSize(sizes.width, sizes.height)
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-})
+  renderer.setSize(sizes.width, sizes.height);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+});
 
 /**
  * Camera
  */
-// Base camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.set(4, 5, 4)
-scene.add(camera)
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
+camera.position.set(4, 5, 4);
+scene.add(camera);
 
 // Controls
-const controls = new OrbitControls(camera, canvas)
-controls.target.y = 3.5
-controls.enableDamping = true
+const controls = new OrbitControls(camera, canvas);
+controls.target.y = 3.5;
+controls.enableDamping = true;
 
 /**
  * Renderer
  */
-const renderer = new THREE.WebGLRenderer({
-  canvas: canvas
-})
-renderer.setSize(sizes.width, sizes.height)
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+const renderer = new THREE.WebGLRenderer({ canvas: canvas });
+renderer.setSize(sizes.width, sizes.height);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace; // Correct color space
 
 /**
  * Animate
  */
-const clock = new THREE.Clock()
+const clock = new THREE.Clock();
 const tick = () => {
-  // Time
-  const elapsedTime = clock.getElapsedTime()
+  const elapsedTime = clock.getElapsedTime();
+
+  // Animations
+  torusKnot.rotation.y = elapsedTime;
+  holyDonut.rotation.x = elapsedTime;
 
   // Update controls
-  controls.update()
+  controls.update();
 
   // Render
-  renderer.render(scene, camera)
+  renderer.render(scene, camera);
 
-  // Call tick again on the next frame
-  window.requestAnimationFrame(tick)
+  requestAnimationFrame(tick);
+};
 
-  if(holyDonut){
-    holyDonut.rotation.x = elapsedTime
-    cubeCamera.update(renderer, scene)
-  }
-    if(torusKnot){
-    torusKnot.rotation.y = elapsedTime
-  }
-}
+tick();
 
-tick()
-
-gui.add(scene, 'environmentIntensity').min(0).max(1).step(0.001).name('environmentIntensity');
-gui.add(scene, 'backgroundIntensity').min(0).max(1).step(0.001).name('backgroundIntensity');
-gui.add(scene, 'backgroundBlurriness').min(0).max(1).step(0.0001).name('backgroundBlurriness');
-gui.add(scene.environmentRotation, 'y').min(0).max(Math.PI * 2).step(0.001).name('environmentRotation');
-gui.add(scene.backgroundRotation, 'y').min(0).max(Math.PI * 2).step(0.001).name('backgroundRotation');
+/**
+ * Debug GUI
+ */
+gui.add(scene, 'environmentIntensity').min(0).max(1).step(0.001).name('environment Intensity');
+gui.add(scene, 'backgroundIntensity').min(0).max(1).step(0.001).name('Background Intensity');
+gui.add(scene, 'backgroundBlurriness').min(0).max(1).step(0.0001).name('Background Blurriness');
