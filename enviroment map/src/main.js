@@ -59,7 +59,6 @@ rgbeLoader.load('/environmentMaps/0/2k.hdr', function (envMap) {
 /**
  * 
  */
-
 gltfLoader.load('/models/FlightHelmet/glTF/FlightHelmet.gltf', function (gltf) {
   scene.add(gltf.scene);
   gltf.scene.scale.set(10, 10, 10);
@@ -88,7 +87,6 @@ const sizes = {
   width: window.innerWidth,
   height: window.innerHeight
 }
-
 window.addEventListener('resize', () => {
   // Update sizes
   sizes.width = window.innerWidth
