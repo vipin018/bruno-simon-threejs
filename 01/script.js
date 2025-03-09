@@ -20,7 +20,6 @@ const material = new THREE.MeshBasicMaterial({ color: 0x0000ff });
 // mesh
 const mesh = new THREE.Mesh(geometry, material);
 
-
 // add the mesh to the scene
 scene.add(mesh);
 
