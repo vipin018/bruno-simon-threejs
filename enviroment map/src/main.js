@@ -46,7 +46,7 @@ scene.environmentRotation.y = 1;
 
 */
 
-rgbeLoader.load('/environmentMaps/0/2k.hdr', function (envMap) {
+rgbeLoader.load('/environmentMaps/1/2k.hdr', function (envMap) {
   envMap.mapping = THREE.EquirectangularReflectionMapping;
   scene.background = envMap;
   scene.environment = envMap;
@@ -55,6 +55,7 @@ rgbeLoader.load('/environmentMaps/0/2k.hdr', function (envMap) {
   scene.backgroundBlurriness = 0;
   scene.backgroundRotation.y = 1;
   scene.environmentRotation.y = 1;
+  scene.wireframe = true;
 });
 /**
  * 
@@ -76,9 +77,19 @@ const torusKnot = new THREE.Mesh(
   })
 )
 torusKnot.position.y = 4
-torusKnot.position.x = -4
+torusKnot.position.x = -3
 scene.add(torusKnot)
 // torusKnot.material.envMap = envMap;
+
+const holyDonut = new THREE.Mesh(
+  new THREE.TorusGeometry(6, 0.5, 100, 32),
+  new THREE.MeshBasicMaterial({
+    color: 'white',
+  })
+)
+holyDonut.position.y = 3.5
+// holyDonut.position.x = 4
+scene.add(holyDonut)
 
 /**
  * Sizes
@@ -139,6 +150,10 @@ const tick = () => {
 
   // Call tick again on the next frame
   window.requestAnimationFrame(tick)
+
+  if(holyDonut){
+    holyDonut.rotation.x = elapsedTime
+  }
 }
 
 tick()
