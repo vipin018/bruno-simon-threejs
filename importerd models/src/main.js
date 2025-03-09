@@ -3,6 +3,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import GUI from 'lil-gui'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
+
+
 /**
  * Base
  */
@@ -16,12 +18,17 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 // models
-const dracoLoader = new DRACOLoader()
-dracoLoader.setDecoderPath('/models/duck/glTF-Draco/Duck.gltf')
-const loader = new GLTFLoader()
-loader.load('./models/duck/glTF-Draco/Duck.gltf', (gltf) => {
-    console.log(gltf);
-    scene.add(gltf.scene)
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath('/draco/')
+const loader = new GLTFLoader();
+let mixer = null;
+loader.setDRACOLoader(dracoLoader)
+loader.load('./models/fox/glTF/Fox.gltf', (gltf) => {
+   mixer = new THREE.AnimationMixer(gltf.scene)
+  const action = mixer.clipAction(gltf.animations[0])
+  action.play()
+  scene.add(gltf.scene)
+  gltf.scene.scale.set(0.02, 0.02, 0.02)
 
 })
 
@@ -124,6 +131,8 @@ const tick = () =>
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
+
+    mixer.update(deltaTime)
 }
 
 tick()
