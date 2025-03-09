@@ -1,91 +1,128 @@
-import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import * as THREE from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import GUI from 'lil-gui'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
-// canvas
-const canvas = document.querySelector('.webgl');
+/**
+ * Loaders
+ */
+const loader = new GLTFLoader();
 
-// scene
-const scene = new THREE.Scene();
 
-// lights
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-directionalLight.position.set(2, 3, 1); // Adjusted position for better shadow visibility
-scene.add(directionalLight);
+/**
+ * Base
+ */
+// Debug
+const gui = new GUI()
 
-// Shadow properties for the light
-directionalLight.castShadow = true;
-directionalLight.shadow.mapSize.set(1024, 1024);
-directionalLight.shadow.radius = 5;
-directionalLight.shadow.camera.near = 0.5;
-directionalLight.shadow.camera.far = 50;
-directionalLight.shadow.camera.left = -5;
-directionalLight.shadow.camera.right = 5;
-directionalLight.shadow.camera.top = 5;
-directionalLight.shadow.camera.bottom = -5;
+// Canvas
+const canvas = document.querySelector('canvas.webgl')
 
-// geometry
-const geometry = new THREE.SphereGeometry(1, 32, 32);
+// Scene
+const scene = new THREE.Scene()
 
-// material
-const material = new THREE.MeshStandardMaterial({ 
-    metalness: 0.5,
-    roughness: 0.3
+/**
+ * Enviroment Map
+ */
+
+const envMap = new THREE.CubeTextureLoader().load([
+  '/environmentMaps/2/px.png',
+  '/environmentMaps/2/nx.png',
+  '/environmentMaps/2/py.png',
+  '/environmentMaps/2/ny.png',
+  '/environmentMaps/2/pz.png',
+  '/environmentMaps/2/nz.png',
+]);
+
+scene.background = envMap;
+scene.environment = envMap;
+
+/**
+ * 
+ */
+
+loader.load('/models/FlightHelmet/glTF/FlightHelmet.gltf', function (gltf) {
+  scene.add(gltf.scene);
+  gltf.scene.scale.set(10, 10, 10);
 });
 
-const mesh = new THREE.Mesh(geometry, material);
-scene.add(mesh);
-// Shadow properties for the sphere
-mesh.castShadow = true;
-mesh.receiveShadow = true;
+/**
+ * Torus Knot
+ */
+const torusKnot = new THREE.Mesh(
+  new THREE.TorusKnotGeometry(1, 0.4, 100, 16),
+  new THREE.MeshStandardMaterial({
+    roughness: 0.3,
+    metalness: 1,
+    color: '#aaaaaa',
+  })
+)
+torusKnot.position.y = 4
+torusKnot.position.x = -4
+scene.add(torusKnot)
+// torusKnot.material.envMap = envMap;
 
-// floor
-const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(7, 7),
-    new THREE.MeshStandardMaterial({ color: 0xffffff })
-);
-scene.add(floor);
-floor.rotation.x = -Math.PI / 2;
-floor.position.y = -1;
-floor.receiveShadow = true;
-
-// sizes
+/**
+ * Sizes
+ */
 const sizes = {
-    width: window.innerWidth,
-    height: window.innerHeight
+  width: window.innerWidth,
+  height: window.innerHeight
 }
 
-// camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height);
-camera.position.z = 5;
-camera.position.x = 1;
-camera.position.y = 1;
-camera.rotateX = Math.PI*0.5;
-scene.add(camera);
+window.addEventListener('resize', () => {
+  // Update sizes
+  sizes.width = window.innerWidth
+  sizes.height = window.innerHeight
 
-// renderer
+  // Update camera
+  camera.aspect = sizes.width / sizes.height
+  camera.updateProjectionMatrix()
+
+  // Update renderer
+  renderer.setSize(sizes.width, sizes.height)
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+})
+
+/**
+ * Camera
+ */
+// Base camera
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
+camera.position.set(4, 5, 4)
+scene.add(camera)
+
+// Controls
+const controls = new OrbitControls(camera, canvas)
+controls.target.y = 3.5
+controls.enableDamping = true
+
+/**
+ * Renderer
+ */
 const renderer = new THREE.WebGLRenderer({
-    canvas: canvas,
-});
-renderer.setSize(sizes.width, sizes.height);
-// Enable shadows in renderer
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Soft shadow edges
-renderer.render(scene, camera);
+  canvas: canvas
+})
+renderer.setSize(sizes.width, sizes.height)
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
-// controls
-const controls = new OrbitControls(camera, canvas);
-controls.enableDamping = true;
+/**
+ * Animate
+ */
+const clock = new THREE.Clock()
+const tick = () => {
+  // Time
+  const elapsedTime = clock.getElapsedTime()
 
-// animation
-const clock = new THREE.Clock();
+  // Update controls
+  controls.update()
 
-function animate() {
-    controls.update();
-    renderer.render(scene, camera);
-    requestAnimationFrame(animate);
-    
+  // Render
+  renderer.render(scene, camera)
+
+  // Call tick again on the next frame
+  window.requestAnimationFrame(tick)
 }
-animate();
+
+tick()
