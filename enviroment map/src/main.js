@@ -56,7 +56,6 @@ rgbeLoader.load('/environmentMaps/0/2k.hdr', function (envMap) {
   scene.backgroundRotation.y = 1;
   scene.environmentRotation.y = 1;
 });
-
 /**
  * 
  */
