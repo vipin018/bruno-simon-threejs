@@ -46,7 +46,6 @@ controls.enableDamping = true;
 
 // animation
 const clock = new THREE.Clock();
-
 function animate() {
     controls.update();
     renderer.render(scene, camera);
