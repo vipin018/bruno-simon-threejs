@@ -3,7 +3,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 // canvas
 const canvas = document.querySelector('.webgl');
 
-
 // scene
 const scene = new THREE.Scene();
 // it is like a container that holds all the objects.
