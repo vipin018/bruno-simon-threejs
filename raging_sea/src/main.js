@@ -8,7 +8,9 @@ import testFragmentShader from './shaders/fragment.glsl'
  * Base
  */
 // Debug
-const gui = new GUI()
+const gui = new GUI({
+    width: 340
+})
 
 // Canvas
 const canvas = document.querySelector('canvas')
@@ -20,18 +22,33 @@ const scene = new THREE.Scene()
  * Test mesh
  */
 // Geometry
-const geometry = new THREE.PlaneGeometry(1, 1, 32, 32)
+const geometry = new THREE.PlaneGeometry(3, 3, 128, 128)
 
 // Material
 const material = new THREE.ShaderMaterial({
     vertexShader: testVertexShader,
     fragmentShader: testFragmentShader,
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    // wireframe: true,
+    uniforms: {
+        uTime: { value: 0.0 },
+        uBigWavesElevation: { value: 0.02 },
+        uBigWavesFrequency: { value: new THREE.Vector2(5, 1.5) },
+        uBigWavesSpeed: { value: 0.75 },
+
+    }
 })
+
+// debug-gui
+gui.add(material.uniforms.uBigWavesElevation, 'value').min(0).max(1).step(0.001).name('uBigWavesElevation');
+gui.add(material.uniforms.uBigWavesFrequency.value, 'x').min(0).max(10).step(0.001).name('uBigWavesFrequency_X');
+gui.add(material.uniforms.uBigWavesFrequency.value, 'y').min(0).max(10).step(0.001).name('uBigWavesFrequency_Y');
+gui.add(material.uniforms.uBigWavesSpeed, 'value').min(0).max(5).step(0.001).name('uBigWavesSpeed');
 
 // Mesh
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
+mesh.rotation.x = - Math.PI / 2
 
 /**
  * Sizes
@@ -41,8 +58,7 @@ const sizes = {
     height: window.innerHeight
 }
 
-window.addEventListener('resize', () =>
-{
+window.addEventListener('resize', () => {
     // Update sizes
     sizes.width = window.innerWidth
     sizes.height = window.innerHeight
@@ -54,6 +70,9 @@ window.addEventListener('resize', () =>
     // Update renderer
     renderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+
+
 })
 
 /**
@@ -61,7 +80,7 @@ window.addEventListener('resize', () =>
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.set(0.25, - 0.25, 1)
+camera.position.set(0, 0.5, 1.8)
 scene.add(camera)
 
 // Controls
@@ -80,8 +99,9 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 /**
  * Animate
  */
-const tick = () =>
-{
+const clock = new THREE.Clock()
+const tick = () => {
+    const elapsedTime = clock.getElapsedTime()
     // Update controls
     controls.update()
 
@@ -90,6 +110,9 @@ const tick = () =>
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
+
+    // update time
+    material.uniforms.uTime.value = elapsedTime
 }
 
 tick()
