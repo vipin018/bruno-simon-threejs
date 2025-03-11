@@ -9,16 +9,13 @@ const gui = new GUI({
 });
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 0, 5);
+camera.position.set(0, 0, 3);
 // camera.lookAt(0, 0, 0);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 document.body.appendChild(renderer.domElement);
 
-// Lights
-const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
-scene.add(ambientLight);
 
 // Cube
 const geometry = new THREE.PlaneGeometry(3, 3, 32, 32);
@@ -32,9 +29,12 @@ for (let i = 0; i < count; i++) {
 
 geometry.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 1));
 
+const loader = new THREE.TextureLoader();
+const texture = loader.load('./textures/tex2.jpg');
 
 
 const material = new THREE.RawShaderMaterial({
+
   vertexShader,
   fragmentShader,
   // wireframe: true,
@@ -42,6 +42,8 @@ const material = new THREE.RawShaderMaterial({
   uniforms: {
     uFrequency: { value: new THREE.Vector2(6, 3) },
     uTime: { value: 0 },
+    uColor: { value: new THREE.Color("orange", 0.9, 0.5) },
+    uTexture: { value: texture },
   },
 });
 
@@ -49,6 +51,7 @@ gui.add(material.uniforms.uFrequency.value, 'x').min(0).max(20).step(0.01).name(
 gui.add(material.uniforms.uFrequency.value, 'y').min(0).max(20).step(0.01).name('uFrequency Y');
 
 const plane = new THREE.Mesh(geometry, material);
+plane.scale.y =2 / 3;
 scene.add(plane);
 
 // Controls
