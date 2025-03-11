@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import vertexShader from './shaders/test/vertex.glsl';
+import fragmentShader from './shaders/test/fragment.glsl';
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -17,24 +19,8 @@ scene.add(ambientLight);
 // Cube
 const geometry = new THREE.PlaneGeometry(5, 5, 32, 32);
 const material = new THREE.RawShaderMaterial({
-  vertexShader: `
-  uniform mat4 projectionMatrix; 
-  uniform mat4 viewMatrix;
-  uniform mat4 modelMatrix;
-
-  attribute vec3 position;
-
-  void main() {
-  gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
-  }
-  `,
-  fragmentShader: `
-  precision mediump float;
-
-  void main() {
-    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-  }
-  `,
+  vertexShader,
+  fragmentShader,
 });
 const plane = new THREE.Mesh(geometry, material);
 scene.add(plane);
