@@ -11,21 +11,33 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 document.body.appendChild(renderer.domElement);
 
 // Lights
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-directionalLight.position.set(1, 1, 1);
-scene.add(directionalLight);
-
 // Cube
-const geometry = new THREE.BoxGeometry(2, 2, 2);
-const material = new THREE.MeshStandardMaterial({
-  roughness: 0.3,
-  metalness: 0.5,
+const geometry = new THREE.PlaneGeometry(5, 5, 32, 32);
+const material = new THREE.RawShaderMaterial({
+  vertexShader: `
+  uniform mat4 projectionMatrix; 
+  uniform mat4 viewMatrix;
+  uniform mat4 modelMatrix;
+
+  attribute vec3 position;
+
+  void main() {
+  gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+  }
+  `,
+  fragmentShader: `
+  precision mediump float;
+
+  void main() {
+    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+  }
+  `,
 });
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
+const plane = new THREE.Mesh(geometry, material);
+scene.add(plane);
 
 // Controls
 const controls = new OrbitControls(camera, renderer.domElement);
