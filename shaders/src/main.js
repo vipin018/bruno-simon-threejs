@@ -21,7 +21,19 @@ const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
 scene.add(ambientLight);
 
 // Cube
-const geometry = new THREE.PlaneGeometry(2, 2, 32, 32);
+const geometry = new THREE.PlaneGeometry(3, 3, 32, 32);
+
+const count = geometry.attributes.position.count;
+const randoms = new Float32Array(count);
+
+for (let i = 0; i < count; i++) {
+  randoms[i] = Math.random();
+}
+
+geometry.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 1));
+
+
+
 const material = new THREE.RawShaderMaterial({
   vertexShader,
   fragmentShader,
