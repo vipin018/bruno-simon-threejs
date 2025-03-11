@@ -5,7 +5,7 @@ import vertexShader from './shaders/test/vertex.glsl';
 import fragmentShader from './shaders/test/fragment.glsl';
 
 const gui = new GUI({
-  width: 100,
+  width: 300,
 });
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -39,8 +39,15 @@ const material = new THREE.RawShaderMaterial({
   fragmentShader,
   // wireframe: true,
   side: THREE.DoubleSide,
-  transparent: true,
+  uniforms: {
+    uFrequency: { value: new THREE.Vector2(6, 3) },
+    uTime: { value: 0 },
+  },
 });
+
+gui.add(material.uniforms.uFrequency.value, 'x').min(0).max(20).step(0.01).name('uFrequency X');
+gui.add(material.uniforms.uFrequency.value, 'y').min(0).max(20).step(0.01).name('uFrequency Y');
+
 const plane = new THREE.Mesh(geometry, material);
 scene.add(plane);
 
@@ -57,10 +64,13 @@ window.addEventListener('resize', () => {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 });
 
+let clock = new THREE.Clock();
 // Animation loop
 function animate() {
+  const elapsedTime = clock.getElapsedTime();
   controls.update();
   renderer.render(scene, camera);
   requestAnimationFrame(animate);
+  material.uniforms.uTime.value = elapsedTime;
 }
 animate();
