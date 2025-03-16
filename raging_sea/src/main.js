@@ -11,6 +11,7 @@ import testFragmentShader from './shaders/fragment.glsl'
 const gui = new GUI({
     width: 340
 })
+const debugObject = {}
 
 // Canvas
 const canvas = document.querySelector('canvas')
@@ -24,6 +25,9 @@ const scene = new THREE.Scene()
 // Geometry
 const geometry = new THREE.PlaneGeometry(3, 3, 128, 128)
 
+debugObject.depthColor = '#186691'
+debugObject.surfaceColor = '#9bd8ff'
+
 // Material
 const material = new THREE.ShaderMaterial({
     vertexShader: testVertexShader,
@@ -36,6 +40,8 @@ const material = new THREE.ShaderMaterial({
         uBigWavesFrequency: { value: new THREE.Vector2(5, 1.5) },
         uBigWavesSpeed: { value: 0.75 },
 
+        uDepthColor: { value: debugObject.depthColor },
+        uSurfaceColor: { value: debugObject.surfaceColor },
     }
 })
 
@@ -44,6 +50,12 @@ gui.add(material.uniforms.uBigWavesElevation, 'value').min(0).max(1).step(0.001)
 gui.add(material.uniforms.uBigWavesFrequency.value, 'x').min(0).max(10).step(0.001).name('uBigWavesFrequency_X');
 gui.add(material.uniforms.uBigWavesFrequency.value, 'y').min(0).max(10).step(0.001).name('uBigWavesFrequency_Y');
 gui.add(material.uniforms.uBigWavesSpeed, 'value').min(0).max(5).step(0.001).name('uBigWavesSpeed');
+gui.addColor(debugObject, 'depthColor').onChange(() => {
+    material.uniforms.uDepthColor.value = new THREE.Color(debugObject.depthColor)
+})
+gui.addColor(debugObject, 'surfaceColor').onChange(() => {
+    material.uniforms.uSurfaceColor.value = new THREE.Color(debugObject.surfaceColor)
+})  
 
 // Mesh
 const mesh = new THREE.Mesh(geometry, material)
