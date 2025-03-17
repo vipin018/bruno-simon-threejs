@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 import vertexShader from './shader/water/vertex.glsl?raw';  // ✅ Use ?raw if no plugin
 import fragmentShader from './shader/water/fragment.glsl?raw';
 import { GUI } from 'lil-gui';
-
 const gui = new GUI();
 const debugObject = {};
 
@@ -16,9 +16,38 @@ const renderer = new THREE.WebGLRenderer({ canvas });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 
+// enviroment hdri
+const rgbeLoader = new RGBELoader();
+rgbeLoader.load('https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/rogland_clear_night_2k.hdr', (environmentMap) => {
+  environmentMap.mapping = THREE.EquirectangularReflectionMapping;
+  // scene.background = environmentMap;
+  scene.environment = environmentMap;
+});
+
+// circle texture
+const textureLoader = new THREE.TextureLoader();
+const circleTexture = textureLoader.load('./texture/moon.jpg');
+
+const circle = new THREE.SphereGeometry(5,320,320);
+const circleMaterial = new THREE.MeshStandardMaterial({ 
+  map: circleTexture,
+  color: "white",
+  
+ });
+const circleMesh = new THREE.Mesh(circle, circleMaterial);
+scene.add(circleMesh);
+
+circleMesh.position.set(-30, 0, -8);
+circleMesh.rotation.y = Math.PI / 2;
+circleMesh.rotation.x = Math.PI / 2;
+circleMesh.scale.set(3, 3, 3);
+camera.lookAt(circleMesh.position);
+
+
+
 // colors
-debugObject.depthColor = '#2B8CA7';
-debugObject.surfaceColor = '#5CC5E0';
+debugObject.depthColor = '#190061';
+debugObject.surfaceColor = '#FF4500';
 
 const waterGeometry = new THREE.PlaneGeometry(5, 5, 1024, 1024);
 const waterMaterial = new THREE.ShaderMaterial({
