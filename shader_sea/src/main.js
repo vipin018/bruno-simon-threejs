@@ -17,36 +17,31 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 
 // colors
-debugObject.depthColor = '#186691';
-debugObject.surfaceColor = '#9bd8ff';
+debugObject.depthColor = '#2B8CA7';
+debugObject.surfaceColor = '#5CC5E0';
 
-const geometry = new THREE.PlaneGeometry(3, 3, 128, 128);
-const material = new THREE.ShaderMaterial({
+const waterGeometry = new THREE.PlaneGeometry(5, 5, 1024, 1024);
+const waterMaterial = new THREE.ShaderMaterial({
   vertexShader,
   fragmentShader,
   side: THREE.DoubleSide,
   // wireframe: true,
   uniforms: {
-    uTime: {
-      value: 0.0
-    },
+    uTime: { value: 0.0 },
 
-    uBigWavesElevation: {
-      value: 0.2
-    },
-    uBigWavesFrequency: {
-      value: new THREE.Vector2(4, 1.5)
-    },
-    uBigWavesSpeed: {
-      value: 0.75
-    },
+    uBigWavesElevation: { value: 0.2 },
+    uBigWavesFrequency: { value: new THREE.Vector2(4, 1.5) },
+    uBigWavesSpeed: { value: 0.75 },
 
-    uDepthColor: {
-      value: new THREE.Color(debugObject.depthColor)
-    },
-    uSurfaceColor: {
-      value: new THREE.Color(debugObject.surfaceColor)
-    }
+    uSmallWavesElevation: { value: 0.15 },
+    uSmallWavesFrequency: { value: 3.0 },
+    uSmallWavesSpeed: { value: 0.22 },
+    uSmallWavesIteration: { value: 4.0 },
+
+    uDepthColor: { value: new THREE.Color(debugObject.depthColor) },
+    uSurfaceColor: { value: new THREE.Color(debugObject.surfaceColor) },
+    uColorOffset: { value: 0.03 },
+    uColorMultiplier: { value: 4.0 },
 
   }
 
@@ -54,25 +49,30 @@ const material = new THREE.ShaderMaterial({
 
 // debug
 
-gui.add(material.uniforms.uBigWavesElevation, 'value').min(0).max(1).step(0.001).name('uBigWavesElevation');
-gui.add(material.uniforms.uBigWavesFrequency.value, 'x').min(0).max(10).step(0.001).name('uBigWavesFrequencyX');
-gui.add(material.uniforms.uBigWavesFrequency.value, 'y').min(0).max(10).step(0.001).name('uBigWavesFrequencyY');
-gui.add(material.uniforms.uBigWavesSpeed, 'value').min(0).max(3).step(0.001).name('uBigWavesSpeed');
+gui.add(waterMaterial.uniforms.uBigWavesElevation, 'value').min(0).max(1).step(0.001).name('uBigWavesElevation');
+gui.add(waterMaterial.uniforms.uBigWavesFrequency.value, 'x').min(0).max(10).step(0.001).name('uBigWavesFrequencyX');
+gui.add(waterMaterial.uniforms.uBigWavesFrequency.value, 'y').min(0).max(10).step(0.001).name('uBigWavesFrequencyY');
+gui.add(waterMaterial.uniforms.uBigWavesSpeed, 'value').min(0).max(3).step(0.001).name('uBigWavesSpeed');
 
+gui.add(waterMaterial.uniforms.uSmallWavesElevation, 'value').min(0).max(1).step(0.001).name('uSmallWavesElevation');
+gui.add(waterMaterial.uniforms.uSmallWavesFrequency, 'value').min(0).max(10).step(0.001).name('uSmallWavesFrequency');
+gui.add(waterMaterial.uniforms.uSmallWavesSpeed, 'value').min(0).max(3).step(0.001).name('uSmallWavesSpeed');
+gui.add(waterMaterial.uniforms.uSmallWavesIteration, 'value').min(0).max(10).step(0.001).name('uSmallWavesIteration');
 gui.addColor(debugObject, 'depthColor').onChange(() => {
-  material.uniforms.uDepthColor.value.set(debugObject.depthColor);
+  waterMaterial.uniforms.uDepthColor.value.set(debugObject.depthColor);
 });
 gui.addColor(debugObject, 'surfaceColor').onChange(() => {
-  material.uniforms.uSurfaceColor.value.set(debugObject.surfaceColor);
+  waterMaterial.uniforms.uSurfaceColor.value.set(debugObject.surfaceColor);
 });
-
+gui.add(waterMaterial.uniforms.uColorOffset, 'value').min(0).max(1).step(0.001).name('uColorOffset');
+gui.add(waterMaterial.uniforms.uColorMultiplier, 'value').min(0).max(10).step(0.001).name('uColorMultiplier');
 // axesHelper
 const axesHelper = new THREE.AxesHelper();
 scene.add(axesHelper);
 
 
 
-const plane = new THREE.Mesh(geometry, material);
+const plane = new THREE.Mesh(waterGeometry, waterMaterial);
 scene.add(plane);
 plane.rotation.x = Math.PI / 2;
 
@@ -102,7 +102,7 @@ const clock = new THREE.Clock();
 function animate() {
   const elapsedTime = clock.getElapsedTime();
 
-  material.uniforms.uTime.value = elapsedTime;
+  waterMaterial.uniforms.uTime.value = elapsedTime;
   requestAnimationFrame(animate);
 
   resizeRendererToDisplaySize();
