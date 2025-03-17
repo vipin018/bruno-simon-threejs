@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 // canvas
-const canvas = document.querySelector('.webgl');
+const canvas = document.querySelector('canvas');
 
 // scene
 const scene = new THREE.Scene();
@@ -35,6 +35,7 @@ scene.add(camera);
 // renderer
 const renderer = new THREE.WebGLRenderer({
     canvas: canvas,
+    antialias: true ,
 })
 renderer.setSize(sizes.width, sizes.height);
 renderer.render(scene, camera);
