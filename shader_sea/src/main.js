@@ -1,79 +1,56 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { GUI } from 'lil-gui';
-import vertexShader from './shader/vertex.glsl';
-import fragmentShader from './shader/fragment.glsl';
+import vertexShader from './shader/vertex.glsl?raw';  // ✅ Use ?raw if no plugin
+import fragmentShader from './shader/fragment.glsl?raw';
 
-const gui = new GUI({
-  width: 300,
-});
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 0, 3);
-// camera.lookAt(0, 0, 0);
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+
+const canvas = document.querySelector('canvas');
+const renderer = new THREE.WebGLRenderer({ canvas });
+
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-document.body.appendChild(renderer.domElement);
+renderer.setPixelRatio(window.devicePixelRatio);
 
-
-// Cube
-const geometry = new THREE.PlaneGeometry(3, 3, 32, 32);
-
-const count = geometry.attributes.position.count;
-const randoms = new Float32Array(count);
-
-for (let i = 0; i < count; i++) {
-  randoms[i] = Math.random();
-}
-
-geometry.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 1));
-
-const loader = new THREE.TextureLoader();
-const texture = loader.load('./textures/tex2.jpg');
-
-
+const geometry = new THREE.PlaneGeometry(2, 2, 100, 100);
 const material = new THREE.ShaderMaterial({
-
   vertexShader,
   fragmentShader,
-  // wireframe: true,
-  side: THREE.DoubleSide,
-  uniforms: {
-    uFrequency: { value: new THREE.Vector2(6, 3) },
-    uTime: { value: 0 },
-    uColor: { value: new THREE.Color("orange", 0.9, 0.5) },
-    uTexture: { value: texture },
-  },
+  wireframe: true,
 });
-
-gui.add(material.uniforms.uFrequency.value, 'x').min(0).max(20).step(0.01).name('uFrequency X');
-gui.add(material.uniforms.uFrequency.value, 'y').min(0).max(20).step(0.01).name('uFrequency Y');
 
 const plane = new THREE.Mesh(geometry, material);
-plane.scale.y =2 / 3;
 scene.add(plane);
 
-// Controls
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true; // Smooth controls
+camera.position.z = 5;
 
-// Resize handling
-window.addEventListener('resize', () => {
-  const { innerWidth, innerHeight } = window;
-  camera.aspect = innerWidth / innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(innerWidth, innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-});
+const control = new OrbitControls(camera, renderer.domElement);
+control.enableDamping = true;
 
-let clock = new THREE.Clock();
-// Animation loop
-function animate() {
-  const elapsedTime = clock.getElapsedTime();
-  controls.update();
-  renderer.render(scene, camera);
-  requestAnimationFrame(animate);
-  material.uniforms.uTime.value = elapsedTime;
+function resizeRendererToDisplaySize() {
+  const pixelRatio = window.devicePixelRatio;
+  const width = Math.floor(renderer.domElement.clientWidth * pixelRatio);
+  const height = Math.floor(renderer.domElement.clientHeight * pixelRatio);
+
+  const needResize = renderer.domElement.width !== width || renderer.domElement.height !== height;
+
+  if (needResize) {
+    renderer.setSize(width, height, false);
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+  }
+
+  return needResize;
 }
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  resizeRendererToDisplaySize();
+
+
+  control.update();
+  renderer.render(scene, camera);
+}
+
 animate();
