@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import vertexShader from './shader/vertex.glsl?raw';  // ✅ Use ?raw if no plugin
-import fragmentShader from './shader/fragment.glsl?raw';
+import vertexShader from './shader/water/vertex.glsl?raw';  // ✅ Use ?raw if no plugin
+import fragmentShader from './shader/water/fragment.glsl?raw';
 import { GUI } from 'lil-gui';
 
 const gui = new GUI();
@@ -15,25 +15,24 @@ const renderer = new THREE.WebGLRenderer({ canvas });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 
-const geometry = new THREE.PlaneGeometry(2, 2, 100, 100);
+const geometry = new THREE.PlaneGeometry(3, 3, 128, 128);
 const material = new THREE.ShaderMaterial({
   vertexShader,
   fragmentShader,
+  side: THREE.DoubleSide,
   wireframe: true,
-  uniforms: {
-    uFrequency: { value: 10.0 },
-    uTime: { value: 0.0 },
-    uAmplitude: { value: 0.1 },
-  },
+
 });
 
-gui.add(material.uniforms.uFrequency, 'value', 0, 100, 0.01);
-gui.add(material.uniforms.uAmplitude, 'value', 0, 1, 0.01);
+// axesHelper
+const axesHelper = new THREE.AxesHelper();
+scene.add(axesHelper);
 
 const plane = new THREE.Mesh(geometry, material);
 scene.add(plane);
+plane.rotation.x = Math.PI / 2;
 
-camera.position.z = 5;
+camera.position.set(1, 1, 2)
 
 const control = new OrbitControls(camera, renderer.domElement);
 control.enableDamping = true;
@@ -59,8 +58,6 @@ function animate() {
 
   resizeRendererToDisplaySize();
 
-  material.uniforms.uFrequency.value += 0.01;
-  material.uniforms.uTime.value += 0.01;
 
   control.update();
   renderer.render(scene, camera);
