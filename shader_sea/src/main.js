@@ -55,7 +55,7 @@ gui.add(waterMaterial.uniforms.uBigWavesFrequency.value, 'y').min(0).max(10).ste
 gui.add(waterMaterial.uniforms.uBigWavesSpeed, 'value').min(0).max(3).step(0.001).name('uBigWavesSpeed');
 
 gui.add(waterMaterial.uniforms.uSmallWavesElevation, 'value').min(0).max(1).step(0.001).name('uSmallWavesElevation');
-gui.add(waterMaterial.uniforms.uSmallWavesFrequency, 'value').min(0).max(10).step(0.001).name('uSmallWavesFrequency');
+gui.add(waterMaterial.uniforms.uSmallWavesFrequency, 'value').min(0).max(20).step(0.001).name('uSmallWavesFrequency');
 gui.add(waterMaterial.uniforms.uSmallWavesSpeed, 'value').min(0).max(3).step(0.001).name('uSmallWavesSpeed');
 gui.add(waterMaterial.uniforms.uSmallWavesIteration, 'value').min(0).max(10).step(0.001).name('uSmallWavesIteration');
 gui.addColor(debugObject, 'depthColor').onChange(() => {
@@ -67,8 +67,8 @@ gui.addColor(debugObject, 'surfaceColor').onChange(() => {
 gui.add(waterMaterial.uniforms.uColorOffset, 'value').min(0).max(1).step(0.001).name('uColorOffset');
 gui.add(waterMaterial.uniforms.uColorMultiplier, 'value').min(0).max(10).step(0.001).name('uColorMultiplier');
 // axesHelper
-const axesHelper = new THREE.AxesHelper();
-scene.add(axesHelper);
+// const axesHelper = new THREE.AxesHelper();
+// scene.add(axesHelper);
 
 
 
@@ -76,10 +76,17 @@ const plane = new THREE.Mesh(waterGeometry, waterMaterial);
 scene.add(plane);
 plane.rotation.x = Math.PI / 2;
 
-camera.position.set(1, 1, 2)
+camera.position.set(1.5, 0.2, 1)
 
 const control = new OrbitControls(camera, renderer.domElement);
-control.enableDamping = true;
+control.enableDamping = false;
+control.enableZoom = false;
+control.enablePan = false;
+control.enableRotate = false;
+control.enablePan = false;
+control.enableRotate = false;
+control.enablePan = false;
+control.enableRotate = false;
 
 function resizeRendererToDisplaySize() {
   const pixelRatio = window.devicePixelRatio;
