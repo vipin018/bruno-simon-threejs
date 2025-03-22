@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import GUI from 'lil-gui'
-
+import gsap from 'gsap'
 /**
  * Debug
  */
@@ -14,6 +14,7 @@ gui
     .addColor(parameters, 'materialColor')
     .onChange(() => {
         material.color.set(parameters.materialColor)
+        particlesMaterial.color.set(parameters.materialColor)
     })
 
 /**
@@ -52,12 +53,12 @@ const material = new THREE.MeshToonMaterial({
 const objectsDistances = 4;
 
 const mesh1 = new THREE.Mesh(
-    new THREE.ConeGeometry(1, 2, 120),
+    new THREE.BoxGeometry(1, 1, 1),
     material
 )
 
 const mesh2 = new THREE.Mesh(
-    new THREE.TorusKnotGeometry(0.5, 0.4, 100, 16),
+    new THREE.TorusKnotGeometry(0.7, 0.4, 100, 16),
     material
 )
 const mesh3 = new THREE.Mesh(
@@ -76,6 +77,31 @@ mesh3.position.y = - objectsDistances * 2
 mesh1.position.x = 2
 mesh2.position.x = -2
 mesh3.position.x = 2
+
+// particles
+
+
+const particlesCount = 800;
+const positions = new Float32Array(particlesCount * 3)
+
+for (let i = 0; i < particlesCount; i++) {
+    positions[i * 3] = (Math.random() - 0.5) * 10
+    positions[i * 3 + 1] = objectsDistances * 0.5 - Math.random() * objectsDistances * sectionMeshes.length
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 10
+}
+
+const particlesGeometry = new THREE.BufferGeometry()
+particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
+
+const particlesMaterial = new THREE.PointsMaterial({
+    color: parameters.materialColor,
+    size: 0.03,
+    sizeAttenuation: true,
+    depthWrite: false,
+})
+
+const particlesSystem = new THREE.Points(particlesGeometry, particlesMaterial)
+scene.add(particlesSystem)
 
 /**
  * Sizes
@@ -149,10 +175,12 @@ window.addEventListener("mousemove", (e) => {
  * Animate
  */
 const clock = new THREE.Clock()
-
+let oldElapsedTime = 0;
 const tick = () => {
     const elapsedTime = clock.getElapsedTime()
 
+    const deltaTime = elapsedTime - oldElapsedTime
+    oldElapsedTime = elapsedTime
     // Render
     renderer.render(scene, camera)
 
@@ -168,10 +196,17 @@ const tick = () => {
     const parallaxX = cursor.x * 0.5
     const parallaxY = -cursor.y * 0.5
 
-    cameraGroup.position.x = parallaxX
-    cameraGroup.position.y = parallaxY
-    
-    
+    cameraGroup.position.x += (parallaxX - cameraGroup.position.x) * 2 * deltaTime
+    cameraGroup.position.y += (parallaxY - cameraGroup.position.y) * 2 * deltaTime
+
+    // particlesSystem.rotation.y = (elapsedTime * 0.2)
+    gsap.to(particlesSystem.rotation, {
+        y: (elapsedTime * 0.2) + Math.PI * 2,
+        duration: 1,
+        ease: 'power2.inOut',
+        repeat: -1,
+        yoyo: true
+    })
 }
 
 tick()
