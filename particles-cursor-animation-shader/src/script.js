@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import particlesVertexShader from './shaders/particles/vertex.glsl'
 import particlesFragmentShader from './shaders/particles/fragment.glsl'
+import Stats from 'three/examples/jsm/libs/stats.module.js'
 
 /**
  * Base
@@ -43,6 +44,11 @@ window.addEventListener('resize', () =>
     renderer.setPixelRatio(sizes.pixelRatio)
 })
 
+/* stats */
+
+const stats = new Stats()
+document.body.appendChild(stats.dom)
+
 /**
  * Camera
  */
@@ -69,14 +75,15 @@ renderer.setPixelRatio(sizes.pixelRatio)
 /**
  * Particles
  */
-const particlesGeometry = new THREE.PlaneGeometry(10, 10, 32, 32)
+const particlesGeometry = new THREE.PlaneGeometry(10, 10, 256, 256)
 
 const particlesMaterial = new THREE.ShaderMaterial({
     vertexShader: particlesVertexShader,
-    fragmentShader: particlesFragmentShader,
+    fragmentShader: particlesFragmentShader, 
     uniforms:
     {
         uResolution: new THREE.Uniform(new THREE.Vector2(sizes.width * sizes.pixelRatio, sizes.height * sizes.pixelRatio)),
+        uTexture: new THREE.Uniform(textureLoader.load('./picture-6.jpeg'))
     }
 })
 const particles = new THREE.Points(particlesGeometry, particlesMaterial)
