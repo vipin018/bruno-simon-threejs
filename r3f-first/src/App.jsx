@@ -2,9 +2,16 @@ import React from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Stats } from '@react-three/drei'
 import Experience from './Experience'
+import * as THREE from 'three'
 const App = () => {
   return (
-    <Canvas>
+    <Canvas
+    dpr={[1, 2]}
+    gl={{
+      antialias: true,
+      toneMapping:THREE.CineonToneMapping,
+    }}
+    >
 
       <ambientLight intensity={1} />
       <directionalLight

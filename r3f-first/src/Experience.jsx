@@ -28,7 +28,7 @@ const Experience = () => {
                         args={[1, 32, 32]}
                     />
                     <meshStandardMaterial
-                        color={"hotpink"}
+                        color={"#aafffda"}
                         wireframe={false}
                     />
                 </mesh>
@@ -41,7 +41,7 @@ const Experience = () => {
                 >
                     <boxGeometry />
                     <meshStandardMaterial
-                        color={"cadetblue"} />
+                        color={"#ffaaff"} />
                 </mesh>
             </group>
             <mesh
@@ -53,7 +53,9 @@ const Experience = () => {
                     args={[10, 10, 56, 56]}
                 />
                 <meshStandardMaterial
-                    color={"lime"} />
+                    color={"lime"}
+                   
+                     />
             </mesh>
         </>
     )
