@@ -104,6 +104,9 @@ displacement.glowImage.src = './glow.png'
 displacement.plane = new THREE.Mesh(
     new THREE.PlaneGeometry(10, 10),
     new THREE.MeshBasicMaterial({
+        map: displacement.texture,
+        side: THREE.DoubleSide,
+        blending: THREE.AdditiveBlending,
         color: 'black'
     })
 )
@@ -120,12 +123,24 @@ window.addEventListener('pointermove', (event) => {
     displacement.screenCurosr.y = -(event.clientY / sizes.height) * 2 + 1
 })
 
-// tick
+// texture
+displacement.texture = new THREE.CanvasTexture(displacement.canvas)
 
 /**
  * Particles
  */
 const particlesGeometry = new THREE.PlaneGeometry(10, 10, 256, 256)
+
+const intensitiesArray = new Float32Array(particlesGeometry.attributes.position.count)
+const anglesArray = new Float32Array(particlesGeometry.attributes.position.count)
+for (let i = 0; i < particlesGeometry.attributes.position.count; i++) {
+    intensitiesArray[i] = Math.random()
+    anglesArray[i] = Math.random() * Math.PI *2
+}
+
+particlesGeometry.setAttribute('aIntensity', new THREE.BufferAttribute(intensitiesArray, 1))
+particlesGeometry.setAttribute('aAngle', new THREE.BufferAttribute(anglesArray, 1))
+
 
 const particlesMaterial = new THREE.ShaderMaterial({
     vertexShader: particlesVertexShader,
@@ -133,7 +148,8 @@ const particlesMaterial = new THREE.ShaderMaterial({
     uniforms:
     {
         uResolution: new THREE.Uniform(new THREE.Vector2(sizes.width * sizes.pixelRatio, sizes.height * sizes.pixelRatio)),
-        uTexture: new THREE.Uniform(textureLoader.load('./picture-6.jpeg'))
+        uTexture: new THREE.Uniform(textureLoader.load('./picture-1.png')),
+        uDisplacement: new THREE.Uniform(displacement.texture)
     }
 })
 const particles = new THREE.Points(particlesGeometry, particlesMaterial)
@@ -161,18 +177,21 @@ const tick = () => {
         displacement.canvasCurosr.x = uv.x * displacement.canvas.width
         displacement.canvasCurosr.y = (1 - uv.y) * displacement.canvas.height
     }
-
+    displacement.context.globalCompositeOperation = 'source-over'
+    displacement.context.globalAlpha = 0.05
+    displacement.context.fillRect(0, 0, displacement.canvas.width, displacement.canvas.height)
     displacement.context.globalCompositeOperation = 'lighter'
     // draw image
 
     const glowSize = displacement.canvas.width * 0.25
+    displacement.context.globalAlpha = 0.5
     displacement.context.drawImage(
         displacement.glowImage,
         displacement.canvasCurosr.x - glowSize / 2,
         displacement.canvasCurosr.y - glowSize / 2,
         glowSize,
         glowSize)
-        
+    displacement.texture.needsUpdate = true
         
 }
 
