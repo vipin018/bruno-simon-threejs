@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import particlesVertexShader from './shaders/particles/vertex.glsl'
 import particlesFragmentShader from './shaders/particles/fragment.glsl'
-import Stats from 'three/examples/jsm/libs/stats.module.js'
+
 
 /**
  * Base
@@ -25,8 +25,7 @@ const sizes = {
     pixelRatio: Math.min(window.devicePixelRatio, 2)
 }
 
-window.addEventListener('resize', () =>
-{
+window.addEventListener('resize', () => {
     // Update sizes
     sizes.width = window.innerWidth
     sizes.height = window.innerHeight
@@ -44,10 +43,6 @@ window.addEventListener('resize', () =>
     renderer.setPixelRatio(sizes.pixelRatio)
 })
 
-/* stats */
-
-const stats = new Stats()
-document.body.appendChild(stats.dom)
 
 /**
  * Camera
@@ -72,6 +67,61 @@ renderer.setClearColor('#181818')
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(sizes.pixelRatio)
 
+/* 
+    displacement
+*/
+
+const displacement = {};
+
+// 2d canvas
+
+displacement.canvas = document.createElement('canvas')
+displacement.canvas.width = 256
+displacement.canvas.height = 256
+
+// style
+displacement.canvas.style.position = 'fixed'
+displacement.canvas.style.width = '256px'
+displacement.canvas.style.height = '256px'
+displacement.canvas.style.top = '0%'
+displacement.canvas.style.left = '0%'
+displacement.canvas.style.zIndex = '10'
+
+// append to body
+document.body.appendChild(displacement.canvas)
+
+// 2d context
+displacement.context = displacement.canvas.getContext('2d')
+// displacement.context.fillStyle = 'cadetblue'
+displacement.context.fillRect(0, 0, displacement.canvas.width, displacement.canvas.height)
+
+// image loading
+displacement.glowImage = new Image()
+displacement.glowImage.src = './glow.png'
+
+// interactive plane
+
+displacement.plane = new THREE.Mesh(
+    new THREE.PlaneGeometry(10, 10),
+    new THREE.MeshBasicMaterial({
+        color: 'black'
+    })
+)
+scene.add(displacement.plane)
+
+// raycaster
+displacement.raycaster = new THREE.Raycaster()
+displacement.screenCurosr = new THREE.Vector2(9999, 9999)
+displacement.canvasCurosr = new THREE.Vector2(9999, 9999)
+
+// event listener
+window.addEventListener('pointermove', (event) => {
+    displacement.screenCurosr.x = (event.clientX / sizes.width) * 2 - 1
+    displacement.screenCurosr.y = -(event.clientY / sizes.height) * 2 + 1
+})
+
+// tick
+
 /**
  * Particles
  */
@@ -79,7 +129,7 @@ const particlesGeometry = new THREE.PlaneGeometry(10, 10, 256, 256)
 
 const particlesMaterial = new THREE.ShaderMaterial({
     vertexShader: particlesVertexShader,
-    fragmentShader: particlesFragmentShader, 
+    fragmentShader: particlesFragmentShader,
     uniforms:
     {
         uResolution: new THREE.Uniform(new THREE.Vector2(sizes.width * sizes.pixelRatio, sizes.height * sizes.pixelRatio)),
@@ -92,8 +142,7 @@ scene.add(particles)
 /**
  * Animate
  */
-const tick = () =>
-{
+const tick = () => {
     // Update controls
     controls.update()
 
@@ -102,6 +151,29 @@ const tick = () =>
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
+
+    // raycaster
+    displacement.raycaster.setFromCamera(displacement.screenCurosr, camera)
+    const intersects = displacement.raycaster.intersectObject(displacement.plane)
+    if (intersects.length > 0) {
+        const uv = intersects[0].uv
+
+        displacement.canvasCurosr.x = uv.x * displacement.canvas.width
+        displacement.canvasCurosr.y = (1 - uv.y) * displacement.canvas.height
+    }
+
+    displacement.context.globalCompositeOperation = 'lighter'
+    // draw image
+
+    const glowSize = displacement.canvas.width * 0.25
+    displacement.context.drawImage(
+        displacement.glowImage,
+        displacement.canvasCurosr.x - glowSize / 2,
+        displacement.canvasCurosr.y - glowSize / 2,
+        glowSize,
+        glowSize)
+        
+        
 }
 
 tick()
