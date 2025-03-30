@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { Html, PivotControls, TransformControls, } from '@react-three/drei'
+import { MeshReflectorMaterial, MeshRefractionMaterial, Html, PivotControls, TransformControls } from '@react-three/drei'
 const Experience = () => {
 
     const cuberef = useRef();
@@ -45,8 +45,8 @@ const Experience = () => {
                             wrapperClass='sphere-html'
                             position={[1, 1, 0]}
                             center
-                            occlude = {sphereref}
-                            
+                            occlude={sphereref}
+
                         >
                             sphere
                         </Html>
@@ -60,11 +60,17 @@ const Experience = () => {
                 rotation={[-Math.PI / 2, 0, 0]}
             >
                 <planeGeometry args={[10, 10]} />
-                <meshStandardMaterial
-                    color={"skyblue"}
+                <MeshReflectorMaterial
+                    color={"white"}
+                    resolution={512}
+                    blur={[1000, 1000]}
+                    mixBlur={1}
+                    mixStrength={2}
+                    metalness={0.5}
+                    roughness={0.2}
+                    mirror={0.5}
                 />
             </mesh>
-
         </>
     )
 }
