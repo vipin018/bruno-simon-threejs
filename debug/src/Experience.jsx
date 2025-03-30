@@ -2,7 +2,7 @@ import React from 'react'
 import { useControls } from 'leva'
 const Experience = () => {
 
-    const { position, scale} = useControls({
+    const { position, scale, rotation } = useControls({
         position: {
             value: [-2, 0, 0],
             min: -10,
@@ -14,15 +14,30 @@ const Experience = () => {
             min: 0,
             max: 5,
             step: 0.01
+        },
+        rotation: {
+            value: [Math.PI / 2, 0, 0],
+            min: 0,
+            max: Math.PI,
+            step: 0.01
+        },
+        Boxcolor: {
+            value: "#ff0000",
+
+        },
+        Spherecolor: {
+            value: "#00ff00",
         }
     })
 
     return (
         <>
+            
             <group>
                 <mesh
                     scale={1.5}
                     position={[2, 0, 0]}
+                    rotation={rotation}
                 >
                     <boxGeometry />
                     <meshStandardMaterial
