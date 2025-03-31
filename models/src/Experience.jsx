@@ -1,23 +1,17 @@
 import React from 'react'
-
+import { Suspense } from 'react'
+import Model from './Model'
+import { Hamburger } from './Hamburger'
 const Experience = () => {
+
     return (
         <>
-           <group position={[0, 0, 0]}>
-           <mesh position={[-2, 0, 0]} scale={1.5}>
-                <boxGeometry />
-                <meshStandardMaterial 
-                color="cornflowerblue"
+            <Suspense>
+                <Hamburger 
+                scale={0.5}
                 />
-            </mesh>
-            <mesh position={[2, 0, 0]}>
-                <icosahedronGeometry />
-                <meshStandardMaterial
-                color="palevioletred"
-                />
-            </mesh>
-           </group>
-           
+            </Suspense>
+
         </>
     )
 }
