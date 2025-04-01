@@ -9,7 +9,6 @@ const App = () => {
       <Stage>
         <Experience />
       </Stage>
-      {/* <Perf /> */}
     </Canvas>
   )
 }
