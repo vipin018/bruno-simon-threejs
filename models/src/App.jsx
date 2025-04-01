@@ -6,9 +6,7 @@ const App = () => {
   return (
     <Canvas>
       <OrbitControls />
-      <Stage 
-      
-      >
+      <Stage>
         <Experience />
       </Stage>
       {/* <Perf /> */}
