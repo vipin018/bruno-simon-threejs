@@ -10,7 +10,7 @@ void main() {
     // Wave effect using sine function
     float wave = sin(uTime * 2.0 + length(modelPosition.xz) * 3.0) * 0.1;
     modelPosition.x += wave * normalize(modelPosition.x);
-    modelPosition.z += wave * normalize(modelPosition.z);
+    modelPosition.z += wave * normalize(modelPosition.z) * 3;
     modelPosition.y += sin(uTime + modelPosition.y * 2.0) * 0.1;
 
     // Orbiting effect
