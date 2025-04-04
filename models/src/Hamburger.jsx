@@ -31,7 +31,7 @@ export function Hamburger(props) {
           name="topBun"
           geometry={nodes.topBun.geometry}
           material={materials.BunMaterial}
-          position={[0, 1.7711, 0]}
+          position={[0, 3.7711, 0]}
         />
       </group>
     </group>
