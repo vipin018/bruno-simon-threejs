@@ -23,6 +23,17 @@ loadingManager.onError = () => {
 }
 
 const textureLoader = new THREE.TextureLoader(loadingManager)
+
+const checkerboardTexture = textureLoader.load(
+  "./textures/checkerboard-8x8.png"
+)
+
+const minecraftTexture = textureLoader.load(
+  "./textures/minecraft.png"
+)
+minecraftTexture.colorSpace = THREE.SRGBColorSpace
+
+
 const color = textureLoader.load(
   "./textures/door/color.jpg")
 const alpha = textureLoader.load(
@@ -37,19 +48,26 @@ const metalness = textureLoader.load(
   "./textures/door/metalness.jpg")
 const ambientOcclusion = textureLoader.load(
   "./textures/door/ambientOcclusion.jpg")
+color.colorSpace = THREE.SRGBColorSpace
 
-  // color.repeat.set(2, 3)
-  // color.wrapS = THREE.MirroredRepeatWrapping
-  // color.wrapT = THREE.MirroredRepeatWrapping
-  
-  // color.offset.set(0.5, 0.5)
-  // color.rotation = Math.PI * 0.25
 
+// color.repeat.set(2, 3)
+// color.wrapS = THREE.MirroredRepeatWrapping
+// color.wrapT = THREE.MirroredRepeatWrapping
+
+// color.offset.set(0.5, 0.5)
+// color.rotation = Math.PI * 0.25
+
+// color.minFilter = THREE.NearestFilter
+minecraftTexture.magFilter = THREE.NearestFilter
+checkerboardTexture.magFilter = THREE.NearestFilter
 /**
  * Object
  */
 const geometry = new THREE.BoxGeometry(1, 1, 1)
-const material = new THREE.MeshBasicMaterial({ 
+const material = new THREE.MeshBasicMaterial({
+  // map: minecraftTexture,
+  // map: checkerboardTexture,
   map: color,
   alphaMap: alpha,
   heightMap: height,
@@ -59,6 +77,8 @@ const material = new THREE.MeshBasicMaterial({
   aoMap: ambientOcclusion,
   side: THREE.DoubleSide
 })
+
+
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
 
@@ -66,25 +86,24 @@ scene.add(mesh)
  * Sizes
  */
 const sizes = {
-    width: window.innerWidth,
-    height: window.innerHeight
+  width: window.innerWidth,
+  height: window.innerHeight
 }
 
-window.addEventListener('resize', () =>
-{
-    // Update sizes
-    sizes.width = window.innerWidth
-    sizes.height = window.innerHeight
+window.addEventListener('resize', () => {
+  // Update sizes
+  sizes.width = window.innerWidth
+  sizes.height = window.innerHeight
 
-    // Update camera
-    camera.aspect = sizes.width / sizes.height
-    camera.updateProjectionMatrix()
+  // Update camera
+  camera.aspect = sizes.width / sizes.height
+  camera.updateProjectionMatrix()
 
-    // Update renderer
-    renderer.setSize(sizes.width, sizes.height)
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+  // Update renderer
+  renderer.setSize(sizes.width, sizes.height)
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
-   
+
 })
 
 /**
@@ -102,9 +121,9 @@ if (window.innerWidth <= 768) {
   camera.position.y = 1.5
   camera.position.z = 1.5
 } else {
-   camera.position.x = 1
-   camera.position.y = 1
-   camera.position.z = 1
+  camera.position.x = 1
+  camera.position.y = 1
+  camera.position.z = 1
 }
 
 // Controls
@@ -115,7 +134,7 @@ controls.enableDamping = true
  * Renderer
  */
 const renderer = new THREE.WebGLRenderer({
-    canvas: canvas
+  canvas: canvas
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
@@ -125,18 +144,17 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
  */
 const clock = new THREE.Clock()
 
-const tick = () =>
-{
-    const elapsedTime = clock.getElapsedTime()
+const tick = () => {
+  const elapsedTime = clock.getElapsedTime()
 
-    // Update controls
-    controls.update()
+  // Update controls
+  controls.update()
 
-    // Render
-    renderer.render(scene, camera)
+  // Render
+  renderer.render(scene, camera)
 
-    // Call tick again on the next frame
-    window.requestAnimationFrame(tick)
+  // Call tick again on the next frame
+  window.requestAnimationFrame(tick)
 }
 
 tick()
