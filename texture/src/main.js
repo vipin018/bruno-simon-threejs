@@ -14,16 +14,50 @@ scene.background = new THREE.Color(0xffffff)
 /**
  * Textures
  */
-const textureLoader = new THREE.TextureLoader()
+const loadingManager = new THREE.LoadingManager()
+loadingManager.onLoad = () => {
+  console.log("loaded")
+}
+loadingManager.onError = () => {
+  console.log("error")
+}
+
+const textureLoader = new THREE.TextureLoader(loadingManager)
 const color = textureLoader.load(
   "./textures/door/color.jpg")
+const alpha = textureLoader.load(
+  "./textures/door/alpha.jpg")
+const height = textureLoader.load(
+  "./textures/door/height.jpg")
+const normal = textureLoader.load(
+  "./textures/door/normal.jpg")
+const roughness = textureLoader.load(
+  "./textures/door/roughness.jpg")
+const metalness = textureLoader.load(
+  "./textures/door/metalness.jpg")
+const ambientOcclusion = textureLoader.load(
+  "./textures/door/ambientOcclusion.jpg")
+
+  // color.repeat.set(2, 3)
+  // color.wrapS = THREE.MirroredRepeatWrapping
+  // color.wrapT = THREE.MirroredRepeatWrapping
+  
+  // color.offset.set(0.5, 0.5)
+  // color.rotation = Math.PI * 0.25
 
 /**
  * Object
  */
 const geometry = new THREE.BoxGeometry(1, 1, 1)
 const material = new THREE.MeshBasicMaterial({ 
-  map: color
+  map: color,
+  alphaMap: alpha,
+  heightMap: height,
+  normalMap: normal,
+  roughnessMap: roughness,
+  metalnessMap: metalness,
+  aoMap: ambientOcclusion,
+  side: THREE.DoubleSide
 })
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
