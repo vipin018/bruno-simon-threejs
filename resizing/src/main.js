@@ -19,7 +19,7 @@ const material = new THREE.MeshBasicMaterial({color: "#FBDDDB"});
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 scene.background = new THREE.Color("ghostwhite");
-cube.scale.set(1.5, 1.5, 1.5);
+
 
 camera.position.z = 5;
 
