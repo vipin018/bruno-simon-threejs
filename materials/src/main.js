@@ -82,16 +82,16 @@ scene.add(pointLight);
 
 const material = new THREE.MeshStandardMaterial({
   metalness: 0.65,
-  roughness: 0.45,
-  map: doorColor,
-  aoMap: aoMap,
-  aoMapIntensity: 0.5,
-  displacementMap: heightMap,
-  displacementScale: 0.05,
-  // wireframe: true,
-  normalMap: normalMap,
-  alphaMap: doorAlpha,
-  transparent: true,
+  roughness: 0.2,
+  // map: doorColor,
+  // aoMap: aoMap,
+  // aoMapIntensity: 0.5,
+  // displacementMap: heightMap,
+  // displacementScale: 0.05,
+  // // wireframe: true,
+  // normalMap: normalMap,
+  // alphaMap: doorAlpha,
+  // transparent: true,
 });
 
 /**
