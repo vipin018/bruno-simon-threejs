@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
+import { RoomEnvironment } from 'three/examples/jsm/Addons.js'
+
 /**
  * Base
  */
@@ -10,6 +11,9 @@ const canvas = document.querySelector('#canvas')
 // Scene
 const scene = new THREE.Scene()
 scene.background = new THREE.Color(0xffffff)
+
+
+
 
 /**
  * Textures
@@ -21,67 +25,43 @@ loadingManager.onLoad = () => {
 loadingManager.onError = () => {
   console.log("error")
 }
+const textureLoader = new THREE.TextureLoader(loadingManager);
 
-const textureLoader = new THREE.TextureLoader(loadingManager)
+// Load Textures
+const normal = textureLoader.load("./textures/fabric/normal.jpg");
+const color = textureLoader.load("./textures/fabric/diffusion.jpg");
+const arm = textureLoader.load("./textures/fabric/arm.jpg");
 
-const checkerboardTexture = textureLoader.load(
-  "./textures/checkerboard-8x8.png"
-)
+// Repeat the color texture (you can also repeat normal & arm if needed)
+color.wrapS = THREE.RepeatWrapping;
+color.wrapT = THREE.RepeatWrapping;
+// color.repeat.set(1, 10);
 
-const minecraftTexture = textureLoader.load(
-  "./textures/minecraft.png"
-)
-minecraftTexture.colorSpace = THREE.SRGBColorSpace
+// These maps also often need repeat for consistency:
+normal.wrapS = normal.wrapT = THREE.RepeatWrapping;
+// normal.repeat.set(1, 10);
 
+arm.wrapS = arm.wrapT = THREE.RepeatWrapping;
+// arm.repeat.set(1, 10);
 
-const color = textureLoader.load(
-  "./textures/door/color.jpg")
-const alpha = textureLoader.load(
-  "./textures/door/alpha.jpg")
-const height = textureLoader.load(
-  "./textures/door/height.jpg")
-const normal = textureLoader.load(
-  "./textures/door/normal.jpg")
-const roughness = textureLoader.load(
-  "./textures/door/roughness.jpg")
-const metalness = textureLoader.load(
-  "./textures/door/metalness.jpg")
-const ambientOcclusion = textureLoader.load(
-  "./textures/door/ambientOcclusion.jpg")
-color.colorSpace = THREE.SRGBColorSpace
+// Create geometry
+const geometry = new THREE.BoxGeometry(10, 6, 2);
 
+// 🔥 IMPORTANT: For aoMap to work, you MUST set a second set of UVs
+geometry.setAttribute('uv2', new THREE.BufferAttribute(geometry.attributes.uv.array, 2));
 
-// color.repeat.set(2, 3)
-// color.wrapS = THREE.MirroredRepeatWrapping
-// color.wrapT = THREE.MirroredRepeatWrapping
-
-// color.offset.set(0.5, 0.5)
-// color.rotation = Math.PI * 0.25
-
-// color.minFilter = THREE.NearestFilter
-minecraftTexture.magFilter = THREE.NearestFilter
-checkerboardTexture.magFilter = THREE.NearestFilter
-/**
- * Object
- */
-const geometry = new THREE.BoxGeometry(1, 1, 1)
-const material = new THREE.MeshBasicMaterial({
-  // map: minecraftTexture,
-  // map: checkerboardTexture,
+// Create material
+const material = new THREE.MeshStandardMaterial({
   map: color,
-  alphaMap: alpha,
-  heightMap: height,
   normalMap: normal,
-  roughnessMap: roughness,
-  metalnessMap: metalness,
-  aoMap: ambientOcclusion,
-  side: THREE.DoubleSide
-})
-
+  roughnessMap: arm,
+  metalnessMap: arm,
+  aoMap: arm, // uses uv2!
+});
 
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
-
+mesh.scale.set(3, 2, 1)
 /**
  * Sizes
  */
@@ -106,25 +86,17 @@ window.addEventListener('resize', () => {
 
 })
 
+
 /**
  * Camera
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.x = 1
-camera.position.y = 1
-camera.position.z = 1
+camera.position.z = 15
+camera.position.x = 5
+camera.position.y = 2
 scene.add(camera)
 
-if (window.innerWidth <= 768) {
-  camera.position.x = 1.5
-  camera.position.y = 1.5
-  camera.position.z = 1.5
-} else {
-  camera.position.x = 1
-  camera.position.y = 1
-  camera.position.z = 1
-}
 
 // Controls
 const controls = new OrbitControls(camera, canvas)
@@ -138,6 +110,12 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+const environment = new RoomEnvironment();
+const pmremGenerator = new THREE.PMREMGenerator(renderer);
+pmremGenerator.compileCubemapShader();
+const envMap = pmremGenerator.fromScene(environment).texture;
+scene.environment = envMap;
 
 /**
  * Animate
