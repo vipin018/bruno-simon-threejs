@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GUI } from 'lil-gui';
+import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper.js';
 
 const canvas = document.querySelector('.webgl');
 
@@ -23,11 +24,12 @@ const hemisphereLight = new THREE.HemisphereLight(0xff0000, 0x0000ff, 0.9);
 scene.add(hemisphereLight);
 
 // POINT LIGHT
-const pointLight = new THREE.PointLight(0xff9000, 0.5);
+const pointLight = new THREE.PointLight(0xff9000, 1);
+pointLight.position.set(1, -0.5, 1);
 scene.add(pointLight);
 
 // RECTANGLE LIGHT
-const rectAreaLight = new THREE.RectAreaLight(0x4e00ff, 2, 0.5, 1);
+const rectAreaLight = new THREE.RectAreaLight(0x4e00ff, 2, 1, 1);
 scene.add(rectAreaLight);
 rectAreaLight.position.set(-1.5, 0, 1.5);
 rectAreaLight.lookAt(new THREE.Vector3());
@@ -37,11 +39,27 @@ const spotLight = new THREE.SpotLight(0x78ff00, 1, 10, Math.PI *0.1, 0.25, 1);
 spotLight.position.set(0, 2, 3);
 scene.add(spotLight);
 
+/**
+ * HELPERS
+ */
 
+const directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight);
+scene.add(directionalLightHelper);
 
+const hemisphereLightHelper = new THREE.HemisphereLightHelper(hemisphereLight);
+scene.add(hemisphereLightHelper);
+
+const pointLightHelper = new THREE.PointLightHelper(pointLight);
+scene.add(pointLightHelper);
+
+const spotLightHelper = new THREE.SpotLightHelper(spotLight);
+scene.add(spotLightHelper);
+
+const rectHelper = new RectAreaLightHelper(rectAreaLight);
+scene.add(rectHelper);
 
 const geometry = new THREE.BoxGeometry(0.75, 0.75, 0.75);
-const material = new THREE.MeshStandardMaterial({
+const material = new THREE.MeshPhysicalMaterial({
     roughness: 0.4,
 });
 
@@ -110,6 +128,7 @@ function animate() {
     sphere.rotation.x = clock.getElapsedTime() / 2;
     torus.rotation.x = clock.getElapsedTime() / 2;
 
+    
 }
 animate();
 
@@ -120,6 +139,14 @@ window.addEventListener('resize', () => {
     camera.aspect = sizes.width / sizes.height;
     camera.updateProjectionMatrix();
     renderer.setSize(sizes.width, sizes.height);
+});
+
+window.addEventListener('dblclick', () => {
+    if (!document.fullscreenElement) {
+        canvas.requestFullscreen();
+    } else {
+        document.exitFullscreen();
+    }
 });
 
 // GUI
