@@ -163,3 +163,15 @@ rectAreaLightFolder.add(rectAreaLight.position, 'y').min(-10).max(10).step(0.01)
 rectAreaLightFolder.add(rectAreaLight.position, 'z').min(-10).max(10).step(0.01);
 rectAreaLightFolder.add(rectAreaLight, 'visible');
 rectAreaLightFolder.close();
+
+const spotLightFolder = gui.addFolder('Spot Light');
+spotLightFolder.add(spotLight, 'intensity').min(0).max(5).step(0.01);
+spotLightFolder.add(spotLight.position, 'x').min(-10).max(10).step(0.01);
+spotLightFolder.add(spotLight.position, 'y').min(-10).max(10).step(0.01);
+spotLightFolder.add(spotLight.position, 'z').min(-10).max(10).step(0.01);
+spotLightFolder.add(spotLight, 'angle').min(0).max(Math.PI).step(0.01);
+spotLightFolder.add(spotLight, 'penumbra').min(0).max(1).step(0.01);
+spotLightFolder.add(spotLight, 'decay').min(0).max(2).step(0.01);
+spotLightFolder.add(spotLight, 'distance').min(0).max(10).step(0.01);
+spotLightFolder.add(spotLight, 'visible');
+spotLightFolder.close();
