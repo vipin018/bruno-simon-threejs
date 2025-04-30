@@ -182,3 +182,11 @@ window.addEventListener("resize", () => {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
+window.addEventListener("dblclick", () => {
+  if (renderer.domElement.requestFullscreen) {
+    renderer.domElement.requestFullscreen();
+  } else if (renderer.domElement.webkitRequestFullscreen) {
+    renderer.domElement.webkitRequestFullscreen();
+  }
+});
