@@ -31,7 +31,7 @@ scene.add(directionalLight);
 
 const geometry = new THREE.SphereGeometry(1, 32, 32);
 const material = new THREE.MeshPhysicalMaterial({
-  color: "#A7A700",
+  color: "#A7A700"
 });
 const sphere = new THREE.Mesh(geometry, material);
 sphere.castShadow = true;
