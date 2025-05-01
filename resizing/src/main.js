@@ -20,13 +20,11 @@ const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 scene.background = new THREE.Color("ghostwhite");
 
-
 camera.position.z = 5;
 
 window.addEventListener('resize', () => {
   size.width = window.innerWidth;
   size.height = window.innerHeight;
-  
   camera.aspect = size.width / size.height;
   camera.updateProjectionMatrix();
   renderer.setSize(size.width, size.height);
