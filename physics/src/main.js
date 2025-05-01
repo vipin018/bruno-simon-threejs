@@ -60,13 +60,26 @@ window.addEventListener("resize", () => {
   camera.updateProjectionMatrix();
 });
 
+window.addEventListener("dblclick", () => {
+  if (!document.fullscreenElement) {
+    canvas.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+});
+
+
+if (window.innerWidth < 768) {
+  camera.position.z = 10;
+  camera.position.x = 2;
+  camera.position.y = 2;
+}
 const clock = new THREE.Clock();
 function animate() {
   const elapsedTime = clock.getElapsedTime();
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
   controls.update();
-  sphere.position.y = Math.abs(Math.sin(elapsedTime));
 }
 
 animate();
