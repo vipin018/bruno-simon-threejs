@@ -29,6 +29,7 @@ loader.load('./models/fox/glTF/Fox.gltf', (gltf) => {
   action.play()
   scene.add(gltf.scene)
   gltf.scene.scale.set(0.02, 0.02, 0.02)
+  gltf.scene.castShadow = true
 
 })
 
@@ -110,6 +111,7 @@ renderer.shadowMap.enabled = true
 renderer.shadowMap.type = THREE.PCFSoftShadowMap
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+renderer.shadowMap.enabled = true
 
 /**
  * Animate

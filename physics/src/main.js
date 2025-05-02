@@ -40,7 +40,6 @@ world.gravity.set(0, -9.82, 0);
 // material
 const defaultMaterial = new CANNON.Material('default');
 
-
 const contactMaterial = new CANNON.ContactMaterial(defaultMaterial, defaultMaterial, {
   restitution: 0.7,
   friction: 0.1,
@@ -55,6 +54,7 @@ const sphereBody = new CANNON.Body({
   shape: sphereShape,
   material: defaultMaterial,
 });
+sphereBody.applyLocalForce(new CANNON.Vec3(10, 0, 0), sphereBody.position)
 world.addBody(sphereBody);
 
 // floor
@@ -136,6 +136,9 @@ function animate() {
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
   controls.update();
+
+  // sphere
+  sphereBody.applyForce(new CANNON.Vec3(-0.1, 0, 0), sphereBody.position)
 
   // world
   world.step(1/60, deltaTime, 3)
