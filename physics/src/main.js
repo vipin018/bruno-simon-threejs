@@ -37,12 +37,23 @@ const size = {
 const world = new CANNON.World();
 world.gravity.set(0, -9.82, 0);
 
+// material
+const defaultMaterial = new CANNON.Material('default');
+
+
+const contactMaterial = new CANNON.ContactMaterial(defaultMaterial, defaultMaterial, {
+  restitution: 0.7,
+  friction: 0.1,
+});
+world.addContactMaterial(contactMaterial);
+
 // sphere
 const sphereShape = new CANNON.Sphere(1);
 const sphereBody = new CANNON.Body({
   mass: 1,
   position: new CANNON.Vec3(0, 10, 0),
   shape: sphereShape,
+  material: defaultMaterial,
 });
 world.addBody(sphereBody);
 
@@ -50,10 +61,14 @@ world.addBody(sphereBody);
 const floorShape = new CANNON.Plane();
 const floorBody = new CANNON.Body({
   mass: 0,
-  quaternion: new CANNON.Quaternion().setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2),
+  quaternion: new CANNON.Quaternion().setFromAxisAngle(
+    new CANNON.Vec3(-1, 0, 0), Math.PI / 2),
   shape: floorShape,
+  material: defaultMaterial,
 });
 world.addBody(floorBody);
+
+
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
